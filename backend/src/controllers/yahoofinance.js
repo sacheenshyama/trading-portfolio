@@ -3,14 +3,18 @@ const express = require("express");
 
 const stockSearch = async (req, res) => {
   try {
-    const { query } = req.query;
-    if (!query) {
+    const { q } = req.query;
+
+    if (!q) {
       return res.status(400).json({ error: "Query parameter is required" });
     }
-    const result = await yahooFinance.quote(query);
-    if (!result || !result.symbol) {
-      return res.status(404).json({ error: "Stock not found" });
-    }
+    // const result = await yahooFinance.search(q);
+    const result = await yahooFinance.search(q);
+
+    return res.status(200).json(result);
+    // if (!result || !result.symbol) {
+    //   return res.status(404).json({ error: "Stock not found" });
+    // }
   } catch (error) {
     res
       .status(500)
