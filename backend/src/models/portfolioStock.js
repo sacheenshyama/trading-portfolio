@@ -7,7 +7,11 @@ const stockPortfolioSchema = new mongoose.Schema(
     quantity: { type: Number, required: true },
     purchasePrice: { type: Number, required: true },
     exchange: { type: String, required: true },
-    // owner:{type:mongoose.Schema.Types.ObjectId,ref:"User",required:true},
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {
     timestamps: true,
