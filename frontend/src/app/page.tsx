@@ -3,8 +3,10 @@ import PortfolioTable from "@/components/PortfolioTable";
 import SearchBox from "@/components/SearchBox";
 import SectorSummary from "@/components/SectorSummary";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function Home() {
+  const [stockData, setStockData] = useState(null);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("form submitted");
@@ -17,7 +19,7 @@ export default function Home() {
       <form className="w-full max-w-lg" onSubmit={handleSubmit}>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full px-3">
-            <SearchBox />
+            <SearchBox setStockData={setStockData} />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">

@@ -3,7 +3,7 @@ import axios from "axios";
 import React, { use, useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
-const SearchBox = () => {
+const SearchBox = ({setStockData}) => {
   const [value, setValue] = useState("");
   const debounceSearch = useDebounce(value, 500);
   const [showList, setShowList] = useState(false);
@@ -38,6 +38,7 @@ const SearchBox = () => {
   };
   const handleSelect = (item: any) => () => {
     setSelectedValue(`${item.symbol}, ${item.shortname}`);
+    setStockData(item)
     setShowList(false);
     setResultData([]);
     // You can add more logic here if needed, like redirecting to a stock detail page

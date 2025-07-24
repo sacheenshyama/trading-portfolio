@@ -8,7 +8,7 @@ const stock = async (req, res) => {
       return res.status(400).json({ error: "Query parameter is required" });
     }
     // const result = await yahooFinance.search(q);
-    const result = await yahooFinance.search(q);
+    const result = await yahooFinance.quote(q);
 
     return res.status(200).json(result);
     // if (!result || !result.symbol) {
@@ -17,7 +17,9 @@ const stock = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ error: "An error occurred while fetching stock data" });
+      .json({
+        error: error.message || "An error occurred while fetching stock data",
+      });
   }
 };
 
