@@ -1,7 +1,9 @@
 const express = require("express");
-const { stockSearch } = require("../controllers/yahoofinance");
+const { stock } = require("../controllers/yahoofinance");
+const { searchStock } = require("../controllers/searchApi");
 const router = express.Router();
 
-router.get("/stocksearch", stockSearch);
+router.get("/stock", stock);
+router.get("/searchStock", searchStock);
 
 module.exports = router;

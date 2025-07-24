@@ -1,7 +1,6 @@
 const yahooFinance = require("yahoo-finance2").default;
-const express = require("express");
 
-const stockSearch = async (req, res) => {
+const stock = async (req, res) => {
   try {
     const { q } = req.query;
 
@@ -23,5 +22,5 @@ const stockSearch = async (req, res) => {
 };
 
 module.exports = {
-  stockSearch,
+  stock,
 };
