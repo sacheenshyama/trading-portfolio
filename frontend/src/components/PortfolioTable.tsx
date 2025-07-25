@@ -3,12 +3,13 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaArrowTrendDown, FaArrowTrendUp, FaFilePen } from "react-icons/fa6";
 import { RiDeleteBin6Fill } from "react-icons/ri";
-const jwtToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODI5ZjJjMGNhMjYxZTU3MzM0NDA0ZiIsImlhdCI6MTc1MzM5Mjc4NX0.o5PDHubVmWrr2L0YtNrMOxEGARVTbnuAjJIv3ZpDqv4";
+
 const PortfolioTable = () => {
   const [portfolioData, setPortfolioData] = useState([]);
   useEffect(() => {
     const fetchPortfolioData = async () => {
+      const jwtToken = localStorage.getItem("jwtToken");
+      if (!jwtToken) return;
       try {
         const res = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/api/getPortfolio`,

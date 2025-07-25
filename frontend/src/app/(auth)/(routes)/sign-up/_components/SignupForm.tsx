@@ -1,5 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -12,15 +13,35 @@ const schema = z.object({
 const SignupForm = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState();
+  const [error, setError] = useState("");
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: zodResolver(schema) });
 
+  const onSubmit = async (data: FormData) => {
+    console.log("Form data:", data);
+    setLoading(true);
+    setError("");
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/signup`,
+        {
+          email: data.email,
+          password: data.password,
+        }
+      );
+      router.push("/sign-in");
+    } catch (error) {
+      setError("Failed to create account");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <form className="space-y-6" action="#" method="POST">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
         <label
           htmlFor="email"
@@ -39,6 +60,9 @@ const SignupForm = () => {
             className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             placeholder="Enter your email address"
           />
+          {errors.email && (
+            <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
+          )}
         </div>
       </div>
 
@@ -60,15 +84,18 @@ const SignupForm = () => {
             className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             placeholder="Enter your password"
           />
+          {errors.password && (
+            <p className="text-red-500">{errors.password.message}</p>
+          )}
         </div>
       </div>
-
+      {error && <p className="text-red-500">{error}</p>}
       <div>
         <button
-          type="submit"
+          disabled={loading}
           className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          Sign in
+          {loading ? "Creating account…" : "Create Account"}
         </button>
       </div>
     </form>
