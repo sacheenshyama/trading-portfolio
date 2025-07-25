@@ -53,7 +53,7 @@ const getPortfolio = async (req, res) => {
           const gainLossPercent = (gainLoss / invested) * 100;
 
           portfolioResult.push({
-            sysmbol: stock.symbol,
+            symbol: stock.symbol,
             name: stock.name,
             exchange: stock.exchange,
             buyPrice: stock.purchasePrice,

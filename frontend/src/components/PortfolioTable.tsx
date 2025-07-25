@@ -1,53 +1,108 @@
 "use client";
-import React from "react";
-
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { FaArrowTrendDown, FaArrowTrendUp, FaFilePen } from "react-icons/fa6";
+import { RiDeleteBin6Fill } from "react-icons/ri";
+const jwtToken =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODI5ZjJjMGNhMjYxZTU3MzM0NDA0ZiIsImlhdCI6MTc1MzM5Mjc4NX0.o5PDHubVmWrr2L0YtNrMOxEGARVTbnuAjJIv3ZpDqv4";
 const PortfolioTable = () => {
+  const [portfolioData, setPortfolioData] = useState([]);
+  useEffect(() => {
+    const fetchPortfolioData = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/getPortfolio`,
+          {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+            },
+          }
+        );
+        setPortfolioData(res.data.portfolio);
+        console.log("Portfolio data:", res.data.portfolio);
+      } catch (error) {
+        console.error("Error fetching portfolio data:", error);
+      }
+    };
+    fetchPortfolioData();
+  }, []);
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-slate-200">
-        <thead className="bg-slate-100">
+    <div className="relative overflow-x-auto  sm:rounded-lg">
+      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead className="text-xs font-bold text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             {[
-              "Stock name",
-              "Buy",
+              "Stock",
+              "Buy-Price",
               "Qty",
-              "Invested",
-              "%",
-              "Ex",
+              "Invest",
+              "Portfolio %",
+              "Exch",
               "CMP",
-              "Value",
-              "±",
+              "Present Value",
               "P/E",
-              "Earnings",
+              "P&L",
+              "Action",
             ].map((h) => (
-              <th
-                key={h}
-                className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider"
-              >
+              <th key={h} scope="col" className="px-3 py-2">
                 {h}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {Array.from({ length: 10 }).map((_, index) => (
-            <tr
-              key={index}
-              className="border-b border-slate-200 hover:bg-slate-50"
-            >
-              <td className="px-3 py-2">Example {index + 1}</td>
-              <td className="px-3 py-2">Buy</td>
-              <td className="px-3 py-2">100</td>
-              <td className="px-3 py-2">$1000</td>
-              <td className="px-3 py-2">10%</td>
-              <td className="px-3 py-2">Ex</td>
-              <td className="px-3 py-2">$150</td>
-              <td className="px-3 py-2">$15000</td>
-              <td className="px-3 py-2">+5%</td>
-              <td className="px-3 py-2">20</td>
-              <td className="px-3 py-2">$5000</td>
-            </tr>
-          ))}
+          {portfolioData &&
+            portfolioData.map((item) => (
+              <tr
+                key={item.symbol}
+                className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200"
+              >
+                <th
+                  scope="row"
+                  className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {item.symbol}
+                </th>
+                <td className="px-3 py-2">₹{item.buyPrice}</td>
+                <td className="px-3 py-2">{item.quantity}</td>
+                <td className="px-3 py-2">₹{item.invested}</td>
+                <td className="px-3 py-2">
+                  {item.portfolioPercentage.toFixed(2)}%
+                </td>
+                <td className="px-3 py-2">{item.exchange}</td>
+                <td className="px-3 py-2">₹{item.cmp}</td>
+                <td className="px-3 py-2">₹{item.presentValue}</td>
+                <td className="px-3 py-2">{item.peRatio}</td>
+                <td
+                  className={`px-3 py-2 flex ${
+                    item.gainLoss < 0 ? "text-red-600" : "text-green-600"
+                  }`}
+                >
+                  {item.gainLoss < 0 ? (
+                    <FaArrowTrendDown />
+                  ) : (
+                    <FaArrowTrendUp />
+                  )}{" "}
+                  &nbsp; ₹{item.gainLoss}
+                  {`(${item.gainLossPercent}%)`}
+                </td>
+                <td className="px-3 py-2">
+                  <button
+                    type="button"
+                    className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-2 py-2 me-2  dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                  >
+                    <FaFilePen />
+                  </button>
+
+                  <button
+                    type="button"
+                    className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-2 me-2  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                  >
+                    <RiDeleteBin6Fill />
+                  </button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>
