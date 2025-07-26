@@ -26,7 +26,6 @@ const createPortfolio = async (req, res) => {
 };
 
 const getPortfolio = async (req, res) => {
-  console.log(req.user, "user in portfolio");
   try {
     const portfolioStock = await stockPortfolio
       .find({
@@ -60,6 +59,7 @@ const getPortfolio = async (req, res) => {
             quantity: stock.quantity,
             invested,
             cmp,
+            id: stock._id,
             presentValue: currentValue.toFixed(2),
             gainLoss: gainLoss.toFixed(2),
             gainLossPercent: gainLossPercent.toFixed(2),
@@ -114,7 +114,28 @@ const getPortfolio = async (req, res) => {
   }
 };
 
+const deletePortfolio = async (req, res) => {
+  const _id = req.query.id;
+  const owner = req.user._id;
+  if (!_id || !owner) {
+    return res.status(404).json({ message: "portfolio or user not found" });
+  }
+  try {
+    const holding = await stockPortfolio.findOneAndDelete({
+      _id: _id,
+      owner: owner,
+    });
+    if (!holding) return res.status(403).json({ error: "Stock not found" });
+    res.status(200).json({ message: "stock deleted" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const updatePortfolio = async (req, res) => {};
 module.exports = {
   createPortfolio,
   getPortfolio,
+  deletePortfolio,
+  updatePortfolio,
 };
