@@ -1,5 +1,4 @@
 import PortfolioTable from "@/app/(dashboard)/portfolio/_components/PortfolioTable";
-import SectorSummary from "@/app/(dashboard)/portfolio/_components/SectorSummary";
 import StockHoldingForm from "./_components/StockHoldingForm";
 
 export default function Page() {

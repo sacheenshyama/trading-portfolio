@@ -5,6 +5,7 @@ import { FaArrowTrendDown, FaArrowTrendUp, FaFilePen } from "react-icons/fa6";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import UpdateStock from "./UpdateStock";
+import PortfolioChart from "./PortfolioChart";
 
 const PortfolioTable = () => {
   const [loading, setLoading] = useState(false);
@@ -92,7 +93,7 @@ const PortfolioTable = () => {
   };
 
   return (
-    <div className="relative overflow-x-auto  sm:rounded-lg">
+    <div className="relative   sm:rounded-lg">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs font-bold text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -172,6 +173,8 @@ const PortfolioTable = () => {
             ))}
         </tbody>
       </table>
+
+      <PortfolioChart portfolioData={portfolioData} />
       <ToastContainer
         position="top-center"
         autoClose={5000}
