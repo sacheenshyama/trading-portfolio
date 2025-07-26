@@ -2,10 +2,13 @@ import { useDebounce } from "@/hook/Debounce";
 import axios from "axios";
 import React, { use, useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
-
-const SearchBox = ({setStockData}) => {
-  const [value, setValue] = useState("");
-  const debounceSearch = useDebounce(value, 500);
+import { UseFormsetSetValue } from "react-hook-form";
+// interface Props {
+//   setValue:UseFormsetSetValue<any>
+// }
+const SearchBox = ({setValue}) => {
+  const [stockName, setStockName] = useState("");
+  const debounceSearch = useDebounce(stockName, 500);
   const [showList, setShowList] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [resultData, setResultData] = useState<any[]>([]);
@@ -27,7 +30,6 @@ const SearchBox = ({setStockData}) => {
       // console.log("Search result:", result.data.quotes);
       setResultData(result.data.quotes);
       setShowList(true);
-      console.log("Search results:", resultData);
     } catch (error) {
       console.error("Error fetching search results:", error);
       setShowList(true);
@@ -37,12 +39,10 @@ const SearchBox = ({setStockData}) => {
     }
   };
   const handleSelect = (item: any) => () => {
-    setSelectedValue(`${item.symbol}, ${item.shortname}`);
-    setStockData(item)
+    setSelectedValue(`${item.symbol},${item.exchange}, ${item.shortname}`);
+    setValue('stock',item,{shouldValidate:true});
     setShowList(false);
     setResultData([]);
-    // You can add more logic here if needed, like redirecting to a stock detail page
-    console.log("Selected item:", item);
   };
   const handleshow = () => {
     setShowList(!showList);
@@ -68,8 +68,8 @@ const SearchBox = ({setStockData}) => {
             <input
               type="text"
               id="email-address-icon"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
+              value={stockName}
+              onChange={(e) => setStockName(e.target.value)}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search by stock or symbol or company name"
             />

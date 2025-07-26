@@ -5,6 +5,8 @@ import { FaArrowTrendDown, FaArrowTrendUp, FaFilePen } from "react-icons/fa6";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 
 const PortfolioTable = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [portfolioData, setPortfolioData] = useState([]);
   useEffect(() => {
     const fetchPortfolioData = async () => {
@@ -20,13 +22,14 @@ const PortfolioTable = () => {
           }
         );
         setPortfolioData(res.data.portfolio);
-        console.log("Portfolio data:", res.data.portfolio);
       } catch (error) {
+        setPortfolioData([]);
         console.error("Error fetching portfolio data:", error);
       }
     };
     fetchPortfolioData();
   }, []);
+  console.log("portfolio", portfolioData);
   return (
     <div className="relative overflow-x-auto  sm:rounded-lg">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

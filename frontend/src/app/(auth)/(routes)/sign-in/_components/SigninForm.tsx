@@ -32,7 +32,8 @@ const SigninForm = () => {
           password: data.password,
         }
       );
-      localStorage.setItem("jwtToken", res.token);
+      console.log("check login", res);
+      localStorage.setItem("jwtToken", res.data.token);
       router.push("/portfolio");
     } catch (error) {
       setError("Failed to sign in");
