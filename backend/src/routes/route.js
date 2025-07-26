@@ -6,6 +6,7 @@ const {
   createPortfolio,
   getPortfolio,
   deletePortfolio,
+  updatePortfolio,
 } = require("../controllers/portfolio");
 const authMiddleware = require("../middleware/auth");
 const router = express.Router();
@@ -18,6 +19,7 @@ router.get("/searchStock", searchStock);
 
 router.post("/createPortfolio", authMiddleware, createPortfolio);
 router.get("/getPortfolio", authMiddleware, getPortfolio);
-router.delete("/deletePortfolio", authMiddleware, deletePortfolio);
+router.delete("/deletePortfolio/:id", authMiddleware, deletePortfolio);
+router.put("/updatePortfolio/:id", authMiddleware, updatePortfolio);
 
 module.exports = router;

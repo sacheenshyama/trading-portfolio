@@ -63,10 +63,7 @@ const getPortfolio = async (req, res) => {
             presentValue: currentValue.toFixed(2),
             gainLoss: gainLoss.toFixed(2),
             gainLossPercent: gainLossPercent.toFixed(2),
-            peRatio:
-              quote.trailingPE.toFixed(2) ||
-              quote.forwardPE.toFixed(2) ||
-              "N/A",
+            peRatio: quote.trailingPE || quote.forwardPE || "N/A",
             latestEarningsTimestamp: quote.earningsTimestamp
               ? new Date(quote.earningsTimestamp * 1000).toLocaleDateString()
               : "N/A",
@@ -115,7 +112,7 @@ const getPortfolio = async (req, res) => {
 };
 
 const deletePortfolio = async (req, res) => {
-  const _id = req.query.id;
+  const _id = req.params.id;
   const owner = req.user._id;
   if (!_id || !owner) {
     return res.status(404).json({ message: "portfolio or user not found" });
@@ -132,7 +129,35 @@ const deletePortfolio = async (req, res) => {
   }
 };
 
-const updatePortfolio = async (req, res) => {};
+const updatePortfolio = async (req, res) => {
+  const owner = req.user.id;
+  const _id = req.params.id;
+  if (!owner || !_id) {
+    return res.status(404).json({ message: "Portfolio or user not found" });
+  }
+  try {
+    const { symbol, name, quantity, purchasePrice, exchange } = req.body;
+    const update = await stockPortfolio.findOneAndUpdate(
+      {
+        _id,
+        owner,
+      },
+      {
+        symbol,
+        name,
+        quantity,
+        purchasePrice,
+        exchange,
+      }
+    );
+    if (!update) {
+      return res.status(403).json({ message: "Stock not found" });
+    }
+    res.status(200).json({ message: "stock updated" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 module.exports = {
   createPortfolio,
   getPortfolio,

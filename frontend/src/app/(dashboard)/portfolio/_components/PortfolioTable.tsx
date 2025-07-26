@@ -3,11 +3,25 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaArrowTrendDown, FaArrowTrendUp, FaFilePen } from "react-icons/fa6";
 import { RiDeleteBin6Fill } from "react-icons/ri";
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import UpdateStock from "./UpdateStock";
 
 const PortfolioTable = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [portfolioData, setPortfolioData] = useState([]);
+
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [selectedStock, setSelectedStock] = useState(null);
+
+  const handleEdit = (stock) => {
+    setSelectedStock(stock);
+    setIsUpdateModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsUpdateModalOpen(false);
+    setSelectedStock(null);
+  };
   useEffect(() => {
     const fetchPortfolioData = async () => {
       const jwtToken = localStorage.getItem("jwtToken");
@@ -29,7 +43,54 @@ const PortfolioTable = () => {
     };
     fetchPortfolioData();
   }, []);
-  console.log("portfolio", portfolioData);
+
+  const handleDelete = async (id) => {
+    console.log("id selected", id);
+    setLoading(true);
+    const jwtToken = localStorage.getItem("jwtToken");
+    if (!jwtToken) return;
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/deletePortfolio/${id}`,
+        {
+          headers: {
+            Authorization: `${jwtToken}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.log({
+        error: error.message || "Failed to delete",
+      });
+      setError(error);
+      toast.error(`${error.response?.data?.msg} || 'Failed to add'`, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    } finally {
+      setLoading(false);
+
+      toast.success("🦄 Wow so easy!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+  };
+
   return (
     <div className="relative overflow-x-auto  sm:rounded-lg">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -93,12 +154,14 @@ const PortfolioTable = () => {
                 <td className="px-3 py-2">
                   <button
                     type="button"
+                    onClick={() => handleEdit(item)}
                     className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-2 py-2 me-2  dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
                   >
                     <FaFilePen />
                   </button>
 
                   <button
+                    onClick={() => handleDelete(item.id)}
                     type="button"
                     className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-2 me-2  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                   >
@@ -109,6 +172,24 @@ const PortfolioTable = () => {
             ))}
         </tbody>
       </table>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        theme="light"
+        transition={Bounce}
+      />
+      <UpdateStock
+        isOpen={isUpdateModalOpen}
+        onClose={closeModal}
+        stockUpdate={selectedStock}
+      />
     </div>
   );
 };

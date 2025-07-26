@@ -6,7 +6,7 @@ import { UseFormsetSetValue } from "react-hook-form";
 // interface Props {
 //   setValue:UseFormsetSetValue<any>
 // }
-const SearchBox = ({setValue}) => {
+const SearchBox = ({ setValue, defaultStock }) => {
   const [stockName, setStockName] = useState("");
   const debounceSearch = useDebounce(stockName, 500);
   const [showList, setShowList] = useState(false);
@@ -14,7 +14,14 @@ const SearchBox = ({setValue}) => {
   const [resultData, setResultData] = useState<any[]>([]);
   const [selectedValue, setSelectedValue] = useState("");
   // const handleChange = (e: FormEvent) => {};
-
+  useEffect(() => {
+    // setSelectedValue(`defaultStock`);
+    //
+    if (defaultStock) {
+      setSelectedValue(defaultStock);
+      // console.log("defaultstock", defaultStock);
+    }
+  }, [defaultStock]);
   useEffect(() => {
     if (debounceSearch) {
       handleSearch(debounceSearch);
@@ -40,7 +47,7 @@ const SearchBox = ({setValue}) => {
   };
   const handleSelect = (item: any) => () => {
     setSelectedValue(`${item.symbol},${item.exchange}, ${item.shortname}`);
-    setValue('stock',item,{shouldValidate:true});
+    setValue("stock", item, { shouldValidate: true });
     setShowList(false);
     setResultData([]);
   };

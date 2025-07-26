@@ -30,6 +30,12 @@ const SigninForm = () => {
         {
           email: data.email,
           password: data.password,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
       console.log("check login", res);

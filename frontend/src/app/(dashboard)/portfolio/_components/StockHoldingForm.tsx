@@ -31,7 +31,9 @@ const StockHoldingForm = () => {
     formState: { errors },
   } = useForm({ resolver: zodResolver(schema) });
   const { buyPrice, quantity, stock } = watch();
+
   const total = buyPrice && quantity ? buyPrice * quantity : 0;
+
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     const jwtToken = localStorage.getItem("jwtToken");
