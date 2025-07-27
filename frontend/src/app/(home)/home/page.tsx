@@ -1,10 +1,15 @@
 import React from "react";
 import StockChart from "./_components/StockChart";
+import Navbar from "@/components/Navbar";
 
 const Page = () => {
   return (
-    <div className="max-h-full max-w-full mx-auto">
-      <StockChart />
+    <div className="">
+      <Navbar />
+      <hr className="text-gray-200  w-[100vw] mb-4" />
+      <div className="flex justify-center">
+        <StockChart />
+      </div>
     </div>
   );
 };

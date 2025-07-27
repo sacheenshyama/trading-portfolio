@@ -2,6 +2,7 @@
 import SearchBox from "@/components/SearchBox";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Chart from "react-google-charts";
 import { useForm } from "react-hook-form";
@@ -97,21 +98,27 @@ const StockChart = () => {
     onSubmit();
   };
   return (
-    <div className="max-h-full max-w-full">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex  w-auto ">
-        <SearchBox setValue={setValue} />
-        <button
-          disabled={loading}
-          type="submit"
-          className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-3 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-        >
-          <FaSearch />
-        </button>
-      </form>
-
+    <div className="max-h-full container">
+      <div className="">
+        <form onSubmit={handleSubmit(onSubmit)} className="">
+          <h2 className="px-2 text-2xl font-bold mt-5 mb-2">
+            Welcome to Algo&Stock
+          </h2>
+          <div className="flex ">
+            <SearchBox setValue={setValue} />
+            <button
+              disabled={loading}
+              type="submit"
+              className="focus:outline-none h-fit text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-3 m-auto dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+            >
+              <FaSearch />
+            </button>{" "}
+          </div>
+        </form>
+      </div>
       {data.length > 1 ? (
         <>
-          <div className="border-b border-gray-300">
+          <div className="border-b border-gray-300 mt-8">
             <h1 className="text-2xl font-semibold">{meta.shortName}</h1>
           </div>
           <div className="border-b border-gray-300 flex justify-between mt-2 gap-0.5">
@@ -167,7 +174,24 @@ const StockChart = () => {
           />
         </>
       ) : (
-        <p>Please search your desired stock. Loading....</p>
+        <div className="">
+          <Image
+            src={"/assets/unnamed.png"}
+            width={350}
+            height={250}
+            className="rounded-lg m-auto mt-8 w-[350] h-[200]"
+            alt="Stock illustration"
+          />
+          <p className="font-bold text-center mt-5">
+            Start Tracking Your Investments
+          </p>
+          <p className="text-sm text-center text-gray-500 w-sm mx-auto mt-1">
+            Search for stocks to view detailed performance charts and analysis.
+            Our app helps you monitor your investments and make informed
+            decisions. Sign up to save your searches and receive personalized
+            insights.
+          </p>
+        </div>
       )}
       <ToastContainer
         position="top-center"

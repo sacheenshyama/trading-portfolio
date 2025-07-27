@@ -11,7 +11,10 @@
   "dependencies": {
     "@canvasjs/charts": "^3.13.2",
     "@hookform/resolvers": "^5.1.1",
+    "@types/js-cookie": "^3.0.6",
     "axios": "^1.11.0",
+    "cookies-next": "^6.1.0",
+    "js-cookie": "^3.0.5",
     "next": "15.4.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",

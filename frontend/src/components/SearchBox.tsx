@@ -1,4 +1,6 @@
+"use client";
 import { useDebounce } from "@/hook/Debounce";
+
 import axios from "axios";
 import React, { use, useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
@@ -55,10 +57,10 @@ const SearchBox = ({ setValue, defaultStock }) => {
     setShowList(!showList);
   };
   return (
-    <div className="w-full mx-auto">
+    <div className="w-full  p-2">
       <div>
         <p
-          className=" border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full  p-2  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white cursor-pointer"
+          className=" border bg-gray-200 border-gray-200 text-gray-600 text-sm rounded-lg  block w-full  p-2  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white cursor-pointer"
           onClick={handleshow}
         >
           {selectedValue || "Search by stock or symbol or company name"}
@@ -66,10 +68,10 @@ const SearchBox = ({ setValue, defaultStock }) => {
       </div>
 
       {showList && (
-        <div className="max-w-full  bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 z-10">
+        <div className="w-full  bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 z-10">
           {/* Loading state */}
           <div className="relative">
-            <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+            <div className="absolute inset-y-0 start-0 flex items-center ps-2 pointer-events-none">
               <FaSearch />
             </div>
             <input

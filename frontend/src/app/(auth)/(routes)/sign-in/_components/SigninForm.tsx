@@ -1,6 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import { useSetCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -14,6 +15,7 @@ const SigninForm = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const setCookies = useSetCookie();
 
   const {
     register,
@@ -38,8 +40,9 @@ const SigninForm = () => {
           },
         }
       );
-      console.log("check login", res);
-      localStorage.setItem("jwtToken", res.data.token);
+      // localStorage.setItem("jwtToken", res.data.token);
+      // console.log("sign-intoke", res.data.token);
+      setCookies("jwtToken", res.data.token);
       router.push("/portfolio");
     } catch (error) {
       setError("Failed to sign in");

@@ -6,15 +6,16 @@ import { RiDeleteBin6Fill } from "react-icons/ri";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import UpdateStock from "./UpdateStock";
 import PortfolioChart from "./PortfolioChart";
+import { useGetCookie } from "cookies-next";
 
 const PortfolioTable = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [portfolioData, setPortfolioData] = useState([]);
-
+  const getCookie = useGetCookie();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedStock, setSelectedStock] = useState(null);
-
+  const jwtToken = getCookie("jwtToken");
   const handleEdit = (stock) => {
     setSelectedStock(stock);
     setIsUpdateModalOpen(true);
@@ -25,7 +26,8 @@ const PortfolioTable = () => {
   };
   useEffect(() => {
     const fetchPortfolioData = async () => {
-      const jwtToken = localStorage.getItem("jwtToken");
+      console.log("table cookie", jwtToken);
+      // const jwtToken = getCookie("jwtToken");
       if (!jwtToken) return;
       try {
         const res = await axios.get(
@@ -43,12 +45,14 @@ const PortfolioTable = () => {
       }
     };
     fetchPortfolioData();
-  }, []);
+  }, [jwtToken]);
 
   const handleDelete = async (id) => {
     console.log("id selected", id);
     setLoading(true);
-    const jwtToken = localStorage.getItem("jwtToken");
+    // const jwtToken = localStorage.getItem("jwtToken");
+
+    const jwtToken = getCookie("jwtToken");
     if (!jwtToken) return;
     try {
       await axios.delete(
@@ -91,6 +95,7 @@ const PortfolioTable = () => {
       });
     }
   };
+  console.log("table cookie", getCookie("jwtToken"));
 
   return (
     <div className="relative   sm:rounded-lg">

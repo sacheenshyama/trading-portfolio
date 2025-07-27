@@ -1,9 +1,8 @@
-export default function Home() {
-  return (
-    <div>
-      {" "}
-      home page
-      <div>without login</div>
-    </div>
-  );
-}
+import { redirect } from "next/navigation";
+import React from "react";
+
+const page = () => {
+  redirect("/home");
+};
+
+export default page;

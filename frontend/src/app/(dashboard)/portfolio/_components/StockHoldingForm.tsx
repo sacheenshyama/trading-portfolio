@@ -2,6 +2,7 @@
 import SearchBox from "@/components/SearchBox";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import { useGetCookie, useGetCookies } from "cookies-next";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -22,6 +23,7 @@ const StockHoldingForm = () => {
   const [stockData, setStockData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const getCookie = useGetCookie();
   const {
     register,
     handleSubmit,
@@ -36,7 +38,9 @@ const StockHoldingForm = () => {
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
-    const jwtToken = localStorage.getItem("jwtToken");
+    // const jwtToken = localStorage.getItem("jwtToken");
+    const jwtToken = getCookie("jwtToken");
+    
     if (!jwtToken) {
       toast.warn("Please Login", {
         position: "top-center",
