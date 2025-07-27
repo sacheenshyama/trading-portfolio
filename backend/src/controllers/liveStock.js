@@ -1,19 +1,8 @@
 const yahooFinance = require("yahoo-finance2").default;
 
-// "1d",
-//             "5d",
-//             "1mo",
-//             "3mo",
-//             "6mo",
-//             "1y",
-//             "2y",
-//             "5y",
-//             "10y",
-//             "ytd",
-//             "max"
+
 const getLiveStock = async (req, res) => {
   const { symbol, range } = req.query;
-  console.log("query", req.query);
   if (!symbol) {
     return res.status(401).json({ message: "enter symbol" });
   }
