@@ -9,6 +9,7 @@ const {
   updatePortfolio,
 } = require("../controllers/portfolio");
 const authMiddleware = require("../middleware/auth");
+const { getLiveStock } = require("../controllers/liveStock");
 const router = express.Router();
 
 router.post("/signup", signup);
@@ -16,6 +17,7 @@ router.post("/signin", signin);
 
 router.get("/stock", stock);
 router.get("/searchStock", searchStock);
+router.get('/liveStock',getLiveStock)
 
 router.post("/createPortfolio", authMiddleware, createPortfolio);
 router.get("/getPortfolio", authMiddleware, getPortfolio);

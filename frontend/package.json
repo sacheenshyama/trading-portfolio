@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@canvasjs/charts": "^3.13.2",
     "@hookform/resolvers": "^5.1.1",
     "axios": "^1.11.0",
     "next": "15.4.2",
