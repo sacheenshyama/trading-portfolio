@@ -1,6 +1,6 @@
 import React from "react";
 import StockChart from "./_components/StockChart";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/app/_components/Navbar";
 
 const Page = () => {
   return (

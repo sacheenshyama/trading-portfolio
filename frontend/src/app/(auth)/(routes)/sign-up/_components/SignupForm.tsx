@@ -20,23 +20,22 @@ const SignupForm = () => {
     formState: { errors },
   } = useForm({ resolver: zodResolver(schema) });
 
-  const onSubmit = async (data: FormData) => {
-    console.log("Form data:", data);
+  const onSubmit = async (data: { email: string; password: string }) => {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/signup`,
-        {
-          email: data.email,
-          password: data.password,
-        }
-      );
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/signup`, {
+        email: data.email,
+        password: data.password,
+      });
+      setLoading(false);
       router.push("/sign-in");
     } catch (error) {
-      setError("Failed to create account");
-    } finally {
-      setLoading(false);
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data.error);
+      } else {
+        setError("Failed to create an account");
+      }
     }
   };
 
@@ -93,7 +92,7 @@ const SignupForm = () => {
       <div>
         <button
           disabled={loading}
-          className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
         >
           {loading ? "Creating account…" : "Create Account"}
         </button>

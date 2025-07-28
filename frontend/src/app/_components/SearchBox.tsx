@@ -2,26 +2,24 @@
 import { useDebounce } from "@/hook/Debounce";
 
 import axios from "axios";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { UseFormsetSetValue } from "react-hook-form";
-// interface Props {
-//   setValue:UseFormsetSetValue<any>
-// }
-const SearchBox = ({ setValue, defaultStock }) => {
+
+interface serarchboxProp {
+  setValue: unknown;
+  defaultStock?: string;
+}
+
+const SearchBox: React.FC<serarchboxProp> = ({ setValue, defaultStock }) => {
   const [stockName, setStockName] = useState("");
   const debounceSearch = useDebounce(stockName, 500);
   const [showList, setShowList] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [resultData, setResultData] = useState<any[]>([]);
   const [selectedValue, setSelectedValue] = useState("");
-  // const handleChange = (e: FormEvent) => {};
   useEffect(() => {
-    // setSelectedValue(`defaultStock`);
-    //
     if (defaultStock) {
       setSelectedValue(defaultStock);
-      // console.log("defaultstock", defaultStock);
     }
   }, [defaultStock]);
   useEffect(() => {

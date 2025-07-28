@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
+import { StoreProvider } from "./StoreProvider";
 
 const roboto = Roboto({
   weight: "400",
@@ -24,7 +25,7 @@ export default function RootLayout({
         data-new-gr-c-s-check-loaded="14.1246.0"
         data-gr-ext-installed=""
       >
-        {children}
+        <StoreProvider>{children}</StoreProvider>
       </body>
     </html>
   );

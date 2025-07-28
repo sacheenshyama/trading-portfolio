@@ -1,12 +1,12 @@
-import SearchBox from "@/components/SearchBox";
+import SearchBox from "@/app/_components/SearchBox";
+import { updatePortfolio } from "@/app/lib/redux/featureSlice/portfolioSlice";
+import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
+import { PortfolioStockInput } from "@/app/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import { useGetCookie } from "cookies-next";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoCloseSharp } from "react-icons/io5";
-import { Bounce, toast, ToastContainer } from "react-toastify";
+import { Bounce, ToastContainer } from "react-toastify";
 import z from "zod";
 
 const schema = z.object({
@@ -18,12 +18,21 @@ const schema = z.object({
   buyPrice: z.number().positive(),
   quantity: z.number().positive(),
 });
-const UpdateStock = ({ isOpen, onClose, stockUpdate }) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const getCookie = useGetCookie();
+interface updateProp {
+  isOpen: boolean;
+  onClose: () => void;
+  stockUpdate: PortfolioStockInput | null;
+}
+const UpdateStock: React.FC<updateProp> = ({
+  isOpen,
+  onClose,
+  stockUpdate,
+}) => {
+  // console.log("stockupdate", stockUpdate);
+  const loading = useAppSelector((state) => state.portfolio.loading);
+  const dispatch = useAppDispatch();
+
   const [selectedStock, setSelectedStock] = useState("");
-  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -40,7 +49,7 @@ const UpdateStock = ({ isOpen, onClose, stockUpdate }) => {
           exchange: stockUpdate.exchange,
           shortname: stockUpdate.name,
         },
-        buyPrice: stockUpdate.buyPrice,
+        buyPrice: stockUpdate.purchasePrice,
         quantity: stockUpdate.quantity,
       });
 
@@ -54,76 +63,21 @@ const UpdateStock = ({ isOpen, onClose, stockUpdate }) => {
   const { buyPrice, quantity, stock } = watch();
   const total = buyPrice && quantity ? buyPrice * quantity : 0;
 
-  const onSubmit = async (data: FormData) => {
-    setLoading(true);
-    // const jwtToken = localStorage.getItem("jwtToken");
-    const jwtToken = getCookie("jwtToken");
-    if (!jwtToken) {
-      toast.warn("Please Login", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-      setLoading(false);
-      setTimeout(() => {
-        router.push("/sign-in");
-      }, 500);
-
-      return;
-    }
-    const id = stockUpdate.id;
-    try {
-      await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/updatePortfolio/${id}`,
-        {
-          symbol: stock.symbol,
-          name: stock.shortname,
-          exchange: stock.exchange,
-          quantity: quantity,
-          purchasePrice: buyPrice,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        }
-      );
-    } catch (error) {
-      setError(error);
-      toast.error(`${error.response?.data?.msg} || 'Failed to add'`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-    } finally {
-      setLoading(false);
-      toast.success("🦄 Wow so easy!", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-      setTimeout(() => {
-        // router.refresh();
-      }, 500);
-    }
+  const onSubmit = () => {
+    const id = stockUpdate?.id;
+    dispatch(
+      updatePortfolio({
+        symbol: stock.symbol,
+        exchange: stock.exchange,
+        name: stock.shortname,
+        purchasePrice: buyPrice,
+        quantity,
+        id,
+      })
+    );
+    setTimeout(() => {
+      onClose();
+    }, 300);
   };
   if (!isOpen) return null;
   return (
@@ -219,13 +173,6 @@ const UpdateStock = ({ isOpen, onClose, stockUpdate }) => {
 
           {/* Modal footer */}
           <div className="flex justify-end p-4 border-t border-gray-200 rounded-b dark:border-gray-600">
-            {/* <button
-              type="button"
-              className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-            >
-              Save Changes
-            </button> */}
-
             <button
               type="button"
               className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"

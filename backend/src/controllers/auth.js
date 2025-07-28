@@ -49,6 +49,7 @@ const signin = async (req, res) => {
     const token = jwt.sign(
       {
         id: user._id,
+        email: user.email,
       },
       process.env.JWT_SECRET
     );
@@ -56,7 +57,7 @@ const signin = async (req, res) => {
       httpOnly: false,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    res.status(200).json({ token, email: user.email, id: user._id });
+    res.status(200).json({ token, id: user._id });
   } catch (error) {
     res.status(500).json({
       error: error.message || "An error occurred while signing in",

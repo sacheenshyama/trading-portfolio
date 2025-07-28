@@ -1,28 +1,26 @@
 "use client";
-import { useDeleteCookie, useGetCookie, useHasCookie } from "cookies-next";
-import Image from "next/image";
+import { useDeleteCookie, useHasCookie } from "cookies-next";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-import Cookies from "js-cookie";
 import { FaDeviantart } from "react-icons/fa";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const hasCookies = useHasCookie();
   const deleteCookie = useDeleteCookie();
-  const getCookie = useGetCookie();
   const router = useRouter();
+  const path = usePathname();
   const jwtToken = hasCookies("jwtToken");
   useEffect(() => {
-    console.log("check chek", jwtToken);
     if (jwtToken) {
       setIsLoggedIn(jwtToken);
     }
   }, [jwtToken]);
   const handleLogout = () => {
     deleteCookie("jwtToken");
+    localStorage.removeItem("persist:root");
     setIsLoggedIn(false);
     router.push("/home");
   };
@@ -69,32 +67,38 @@ const Navbar = () => {
           id="navbar-default"
         >
           <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            {["home", "portfolio", isLoggedIn ? "Log-out" : "sign-in"].map(
-              (item, idx) => (
-                <li key={idx} className="font-bold">
-                  {isLoggedIn ? (
-                    <button
-                      onClick={handleLogout}
-                      className="bg-blue-500 text-white"
-                    >
-                      {item}
-                    </button>
-                  ) : (
-                    <Link
-                      href={`${item}`}
-                      className={`block font-bold py-2 px-3 rounded-sm md:p-0 ${
-                        item === "Home"
-                          ? "text-white bg-blue-700 md:bg-transparent md:text-blue-700 dark:text-white md:dark:text-blue-500"
-                          : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                      }`}
-                      aria-current={item === "Home" ? "page" : undefined}
-                    >
-                      {item}
-                    </Link>
-                  )}
-                </li>
-              )
-            )}
+            {["home", "portfolio"].map((item, idx) => (
+              <li key={idx} className="font-bold">
+                <Link
+                  href={`${item}`}
+                  className={`block font-bold py-2 px-3 rounded-sm md:p-0 ${
+                    item === `/${path}`
+                      ? "text-white bg-blue-700 md:bg-transparent md:text-blue-700 dark:text-white md:dark:text-blue-500"
+                      : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  }`}
+                  aria-current={item === "Home" ? "page" : undefined}
+                >
+                  {item}
+                </Link>
+              </li>
+            ))}{" "}
+            <li className="font-bold">
+              {isLoggedIn ? (
+                <button
+                  onClick={handleLogout}
+                  className="bg-black text-white rounded-md px-2"
+                >
+                  Log-out
+                </button>
+              ) : (
+                <button
+                  onClick={() => router.push("/sign-in")}
+                  className="bg-black text-white rounded-md px-2"
+                >
+                  sign-in
+                </button>
+              )}
+            </li>
           </ul>
         </div>
       </div>

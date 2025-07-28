@@ -1,9 +1,9 @@
 "use client";
-import SearchBox from "@/components/SearchBox";
+import SearchBox from "@/app/_components/SearchBox";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Chart from "react-google-charts";
 import { useForm } from "react-hook-form";
 import { FaSearch } from "react-icons/fa";
@@ -24,7 +24,7 @@ const schema = z.object({
   }),
 });
 const StockChart = () => {
-  const [meta, setMeta] = useState({ symbol: "", shortName: "" });
+  const [meta, setMeta] = useState({ symbol: "", shortName: "", range: "" });
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [chartStyle, setChartStyle] = useState<ChartStyle>("AreaChart");
@@ -59,17 +59,6 @@ const StockChart = () => {
     } catch (error) {
       setLoading(false);
       console.log(error);
-      toast.error(`${error?.message} || 'Failed to add'`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
     }
   };
   const options = {
@@ -92,7 +81,7 @@ const StockChart = () => {
       0: { color: "#4f81bd", areaOpacity: 0.15 },
     },
   };
-  const handleTimeStamp = (item) => {
+  const handleTimeStamp = (item: string) => {
     setValidInterval(item);
     setLoading(true);
     onSubmit();
@@ -136,7 +125,7 @@ const StockChart = () => {
                 "10y",
                 "ytd",
                 "max",
-              ].map((item, index) => (
+              ].map((item) => (
                 <button
                   onClick={() => handleTimeStamp(item)}
                   key={item}

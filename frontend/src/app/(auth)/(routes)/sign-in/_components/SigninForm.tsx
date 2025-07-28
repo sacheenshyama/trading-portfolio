@@ -1,11 +1,17 @@
 "use client";
+import {
+  loginFailed,
+  loginStart,
+  loginSuccess,
+} from "@/app/lib/redux/featureSlice/authSlice";
+import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useSetCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
-import { email, z } from "zod";
+import { z } from "zod";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
@@ -13,19 +19,18 @@ const schema = z.object({
 });
 const SigninForm = () => {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const setCookies = useSetCookie();
-
+  const error = useAppSelector((state) => state.auth.error);
+  const loading = useAppSelector((state) => state.auth.loading);
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: zodResolver(schema) });
 
-  const onsubmit = async (data: FormData) => {
-    setLoading(true);
-    setError("");
+  const onsubmit = async (data: { email: string; password: string }) => {
+    dispatch(loginStart());
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/signin`,
@@ -40,14 +45,19 @@ const SigninForm = () => {
           },
         }
       );
-      // localStorage.setItem("jwtToken", res.data.token);
-      // console.log("sign-intoke", res.data.token);
       setCookies("jwtToken", res.data.token);
-      router.push("/portfolio");
+      dispatch(loginSuccess(res.data.token));
+      setTimeout(() => {
+        router.push("/portfolio");
+      }, 2000);
     } catch (error) {
-      setError("Failed to sign in");
-    } finally {
-      setLoading(false);
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data.error || "Failed to sign in";
+        dispatch(loginFailed(errorMessage));
+      } else {
+        const errorMessage = "Failed to sign in";
+        dispatch(loginFailed(errorMessage));
+      }
     }
   };
 
@@ -105,7 +115,7 @@ const SigninForm = () => {
         {error && <p className="text-red-500">{error}</p>}
         <button
           disabled={loading}
-          className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-700"
         >
           {loading ? "Singing in...." : "Sing In"}
         </button>

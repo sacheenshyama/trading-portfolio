@@ -1,15 +1,20 @@
 import PortfolioTable from "@/app/(dashboard)/portfolio/_components/PortfolioTable";
 import StockHoldingForm from "./_components/StockHoldingForm";
+import Navbar from "@/app/_components/Navbar";
 
 export default function Page() {
   return (
     <>
-      <h1 className="text-wxl font-bold mb-4">Portfolio Dashboard</h1>
-      {/* search box with form */}
-      <StockHoldingForm />
+      <div>
+        <Navbar />
+        <hr className="text-gray-200  w-[100vw] mb-4" />
 
-      <div className="mt-6">
-        <PortfolioTable />
+        <h2 className="px-2 text-2xl font-bold mt-5 mb-2">My Portfolio</h2>
+        {/* search box with form */}
+        <StockHoldingForm />
+        <div className="mt-6">
+          <PortfolioTable />
+        </div>
       </div>
     </>
   );

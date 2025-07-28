@@ -1,12 +1,13 @@
 "use client";
-import SearchBox from "@/components/SearchBox";
+import SearchBox from "@/app/_components/SearchBox";
+import { addPortfolio } from "@/app/lib/redux/featureSlice/portfolioSlice";
+import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import { useGetCookie, useGetCookies } from "cookies-next";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
-import { Bounce, toast, ToastContainer } from "react-toastify";
+import { BlinkBlur, OrbitProgress } from "react-loading-indicators";
+import { Bounce, ToastContainer } from "react-toastify";
 import { z } from "zod";
 
 const schema = z.object({
@@ -19,11 +20,12 @@ const schema = z.object({
   quantity: z.number().positive(),
 });
 const StockHoldingForm = () => {
+  const dispatch = useAppDispatch();
+
   const router = useRouter();
-  const [stockData, setStockData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const getCookie = useGetCookie();
+  const loading = useAppSelector((state) => state.portfolio.loading);
+  const error = useAppSelector((state) => state.portfolio.error);
+
   const {
     register,
     handleSubmit,
@@ -36,75 +38,18 @@ const StockHoldingForm = () => {
 
   const total = buyPrice && quantity ? buyPrice * quantity : 0;
 
-  const onSubmit = async (data: FormData) => {
-    setLoading(true);
-    // const jwtToken = localStorage.getItem("jwtToken");
-    const jwtToken = getCookie("jwtToken");
-    
-    if (!jwtToken) {
-      toast.warn("Please Login", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-      setLoading(false);
-      setTimeout(() => {
-        router.push("/sign-in");
-      }, 500);
-
-      return;
-    }
-    try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/createPortfolio`,
-        {
-          symbol: stock.symbol,
-          name: stock.shortname,
-          exchange: stock.exchange,
-          quantity: quantity,
-          purchasePrice: buyPrice,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        }
-      );
-      reset();
-    } catch (error) {
-      setError(error);
-      toast.error(`${error.response?.data?.msg} || 'Failed to add'`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-    } finally {
-      setLoading(false);
-
-      toast.success("🦄 Wow so easy!", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-    }
+  const onSubmit = () => {
+    dispatch(
+      addPortfolio({
+        symbol: stock.symbol,
+        exchange: stock.exchange,
+        name: stock.shortname,
+        purchasePrice: buyPrice,
+        quantity,
+      })
+    );
+    reset();
+    router.refresh();
   };
 
   return (
@@ -158,12 +103,13 @@ const StockHoldingForm = () => {
           />
         </div>
         <div className="w-full md:w-1/2 px-3">
+          {error && <p className="text-red-600">{error}</p>}
           <button
             disabled={loading}
             type="submit"
-            className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+            className="focus:outline-none text-white bg-black hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
           >
-            {loading ? "Adding stock…" : "Add stock"}
+            {loading ? "Adding stock" : "Add stock"}
           </button>
           <ToastContainer
             position="top-center"

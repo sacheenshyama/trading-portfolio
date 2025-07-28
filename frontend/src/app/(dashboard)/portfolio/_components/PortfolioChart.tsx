@@ -1,22 +1,26 @@
+import { PortfolioStock } from "@/app/lib/types";
 import React from "react";
 import Chart from "react-google-charts";
 
-const PortfolioChart = ({ portfolioData }) => {
-
+interface portfolioChartProp {
+  portfolioData: PortfolioStock[];
+}
+const PortfolioChart: React.FC<portfolioChartProp> = ({ portfolioData }) => {
+  console.log("portfoliodata charty", portfolioData);
   const newdata = portfolioData;
-  const data = newdata.map((item) => {
-    return [item.symbol, item.portfolioPercentage];
-  });
+  const data =
+    newdata &&
+    newdata.map((item) => {
+      return [item.symbol, item.portfolioPercentage];
+    });
   data.unshift(["Symbol", "Total Investment"]);
   const options = {
     title: "Portfolio Distribution by Company",
-    pieHole: 0.4, // Creates a Donut Chart. Does not do anything when is3D is enabled
-    is3D: true, // Enables 3D view
-    // slices: {
-    //   1: { offset: 0.2 }, // Explodes the second slice
-    // },
-    pieStartAngle: 100, // Rotates the chart
-    sliceVisibilityThreshold: 0.02, // Hides slices smaller than 2%
+    pieHole: 0.4,
+    is3D: true,
+   
+    pieStartAngle: 100,
+    // sliceVisibilityThreshold: 0.02, // Hides slices smaller than 2%
     legend: {
       position: "bottom",
       alignment: "center",
