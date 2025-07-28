@@ -7,7 +7,8 @@ const morgan = require("morgan");
 const { METHODS } = require("http");
 
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  origin:
+    process.env.FRONTEND_URL || "https://trading-portfolio-one.vercel.app",
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
