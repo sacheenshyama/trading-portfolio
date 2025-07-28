@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { BlinkBlur, OrbitProgress } from "react-loading-indicators";
 import { Bounce, ToastContainer } from "react-toastify";
 import { z } from "zod";
 

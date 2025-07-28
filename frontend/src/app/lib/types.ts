@@ -55,5 +55,36 @@ export interface StockChartPoint {
 export interface StockMeta {
   meta: StockMeta | null;
   chartData: StockChartPoint[];
+}
 
+export interface StockSearch {
+  dispSecIndFlag: boolean;
+  exchDisp: string;
+  exchange: string;
+  index: string;
+  industry: string;
+  industryDisp: string;
+  isYahooFinance: boolean;
+  longname: string;
+  nameChangeDate: string;
+  prevName: string;
+  quoteType: string;
+  score: number;
+  sector: string;
+  sectorDisp: string;
+  shortname: string;
+  symbol: string;
+  typeDisp: string;
+}
+
+export interface SelectedStock {
+  exchDisp: string;
+  exchange: string;
+  index: string;
+  isYahooFinance: boolean;
+  quoteType: string;
+  score: number;
+  shortname: string;
+  symbol: string;
+  typeDisp: string;
 }

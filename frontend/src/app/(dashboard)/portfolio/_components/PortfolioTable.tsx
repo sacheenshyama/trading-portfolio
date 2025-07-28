@@ -96,11 +96,13 @@ const PortfolioTable = () => {
                     <td className="px-3 py-2">₹{item.purchasePrice}</td>
                     <td className="px-3 py-2">{item.quantity}</td>
                     <td className="px-3 py-2">₹{item.invested}</td>
-                    <td className="px-3 py-2">{item.portfolioPercentage}%</td>
+                    <td className="px-3 py-2">
+                      {item.portfolioPercentage.toFixed(2)}%
+                    </td>
                     <td className="px-3 py-2">{item.exchange}</td>
                     <td className="px-3 py-2">₹{item.cmp}</td>
                     <td className="px-3 py-2">₹{item.presentValue}</td>
-                    <td className="px-3 py-2">{item.peRatio}</td>
+                    <td className="px-3 py-2">{item.peRatio.toFixed(2)}</td>
                     <td
                       className={`px-3 py-2 flex ${
                         (item.gainLoss as number) < 0
@@ -113,7 +115,7 @@ const PortfolioTable = () => {
                       ) : (
                         <FaArrowTrendUp />
                       )}{" "}
-                      &nbsp; ₹{item.gainLoss}
+                      &nbsp; ₹{item.gainLoss} <br />
                       {`(${item.gainLossPercent}%)`}
                     </td>
                     <td className="px-3 py-2">
