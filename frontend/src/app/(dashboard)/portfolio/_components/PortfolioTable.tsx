@@ -42,7 +42,7 @@ const PortfolioTable = () => {
   const handleDelete = async (id: string) => {
     dispatch(deletePortfolio(id));
   };
-  console.log("dataaaa", portfolioData);
+  // console.log("dataaaa", portfolioData);
   if (error) {
     return (
       <p className="text-2xl text-red-600">

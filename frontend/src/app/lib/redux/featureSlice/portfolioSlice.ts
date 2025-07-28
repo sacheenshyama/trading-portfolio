@@ -75,7 +75,7 @@ export const updatePortfolio = createAsyncThunk(
   "/api/updatePortfolio/:id",
   async (formData: PortfolioStockInput, { getState }) => {
     const { auth } = getState() as RootState;
-    console.log("updatestock...", formData);
+    // console.log("updatestock...", formData);
     if (!auth.jwtToken) return "Login to see data";
     await axios.put(
       `${process.env.NEXT_PUBLIC_API_URL}/api/updatePortfolio/${formData.id}`,

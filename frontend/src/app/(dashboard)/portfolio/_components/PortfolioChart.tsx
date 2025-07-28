@@ -6,7 +6,7 @@ interface portfolioChartProp {
   portfolioData: PortfolioStock[];
 }
 const PortfolioChart: React.FC<portfolioChartProp> = ({ portfolioData }) => {
-  console.log("portfoliodata charty", portfolioData);
+  // console.log("portfoliodata charty", portfolioData);
   const newdata = portfolioData;
   const data =
     newdata &&
