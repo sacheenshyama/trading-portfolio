@@ -10,8 +10,9 @@ const { METHODS } = require("http");
 const corsOptions = {
   origin: ["https://trading-portfolio-one.vercel.app", "http://localhost:3000"],
   credentials: true,
-  // methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
