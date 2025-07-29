@@ -14,7 +14,7 @@ interface serarchboxProp {
 }
 
 const SearchBox: React.FC<serarchboxProp> = ({ setValue, defaultStock }) => {
-  console.log("setvalue check", setValue);
+  // console.log("setvalue check", setValue);
   const [stockName, setStockName] = useState("");
   const debounceSearch = useDebounce(stockName, 500);
   const [showList, setShowList] = useState(false);
