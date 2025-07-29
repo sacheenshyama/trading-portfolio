@@ -15,8 +15,8 @@ const schema = z.object({
     exchange: z.string().min(1),
     shortname: z.string().min(1),
   }),
-  buyPrice: z.number().positive(),
-  quantity: z.number().positive(),
+  buyPrice: z.number().positive().max(4),
+  quantity: z.number().positive().max(5),
 });
 const StockHoldingForm = () => {
   const dispatch = useAppDispatch();

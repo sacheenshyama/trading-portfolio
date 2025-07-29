@@ -47,7 +47,6 @@ const SigninForm = () => {
       );
       setCookies("jwtToken", res.data.token);
       dispatch(loginSuccess(res.data.token));
-      router.push("/portfolio");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorMessage = error.response?.data.error || "Failed to sign in";
@@ -56,6 +55,8 @@ const SigninForm = () => {
         const errorMessage = "Failed to sign in";
         dispatch(loginFailed(errorMessage));
       }
+    } finally {
+      router.refresh();
     }
   };
 
