@@ -37,6 +37,7 @@ const SignupForm = () => {
           },
         }
       );
+      alert("Account created please login now");
       setLoading(false);
       router.push("/sign-in");
     } catch (error) {

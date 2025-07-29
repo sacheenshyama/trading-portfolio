@@ -33,7 +33,7 @@ export const fetchPortfolio = createAsyncThunk<PortfolioResponse>(
 );
 export const addPortfolio = createAsyncThunk(
   "/api/createPortfolio",
-  async (formdata: PortfolioStockInput, { getState }) => {
+  async (formdata: PortfolioStockInput, { getState, dispatch }) => {
     const { auth } = getState() as RootState;
     if (!auth.jwtToken) return "Login to see data";
     const res = await axios.post(
@@ -52,7 +52,7 @@ export const addPortfolio = createAsyncThunk(
         },
       }
     );
-    fetchPortfolio();
+    dispatch(fetchPortfolio());
     return res.data;
   }
 );
@@ -60,7 +60,7 @@ export const addPortfolio = createAsyncThunk(
 export const deletePortfolio = createAsyncThunk(
   "/api/deletePortfolio",
 
-  async (id: string, { getState }) => {
+  async (id: string, { getState, dispatch }) => {
     const { auth } = getState() as RootState;
     if (!auth.jwtToken) return "Login to see data";
     await axios.delete(
@@ -72,11 +72,12 @@ export const deletePortfolio = createAsyncThunk(
         },
       }
     );
+    dispatch(fetchPortfolio());
   }
 );
 export const updatePortfolio = createAsyncThunk(
   "/api/updatePortfolio/:id",
-  async (formData: PortfolioStockInput, { getState }) => {
+  async (formData: PortfolioStockInput, { getState, dispatch }) => {
     const { auth } = getState() as RootState;
     // console.log("updatestock...", formData);
     if (!auth.jwtToken) return "Login to see data";
@@ -96,6 +97,7 @@ export const updatePortfolio = createAsyncThunk(
         },
       }
     );
+    dispatch(fetchPortfolio());
   }
 );
 

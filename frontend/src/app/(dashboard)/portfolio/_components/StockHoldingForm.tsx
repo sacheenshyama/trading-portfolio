@@ -20,10 +20,8 @@ const schema = z.object({
 });
 const StockHoldingForm = () => {
   const dispatch = useAppDispatch();
-
   const router = useRouter();
   const loading = useAppSelector((state) => state.portfolio.loading);
-  const error = useAppSelector((state) => state.portfolio.error);
 
   const {
     register,
@@ -102,7 +100,6 @@ const StockHoldingForm = () => {
           />
         </div>
         <div className="w-full md:w-1/2 px-3">
-          {error && <p className="text-red-600">{error}</p>}
           <button
             disabled={loading}
             type="submit"

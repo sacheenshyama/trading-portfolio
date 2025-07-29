@@ -18,7 +18,7 @@ const PortfolioTable = () => {
   const data = useAppSelector((state) => state.portfolio.data);
   const error = useAppSelector((state) => state.portfolio.error);
   const loading = useAppSelector((state) => state.portfolio.loading);
-  const [portfolioData, setPortfolioData] = useState(data?.portfolio);
+  // const [portfolioData, setPortfolioData] = useState(data?.portfolio);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedStock, setSelectedStock] =
     useState<PortfolioStockInput | null>(null);
@@ -33,19 +33,21 @@ const PortfolioTable = () => {
 
   useEffect(() => {
     dispatch(fetchPortfolio());
-    setPortfolioData(data?.portfolio);
-  }, [dispatch]);
-  useEffect(() => {
-    dispatch(fetchPortfolio());
   }, [dispatch]);
 
   const handleDelete = async (id: string) => {
     dispatch(deletePortfolio(id));
   };
-  // console.log("dataaaa", portfolioData);
+  if (!data) {
+    return (
+      <p className="text-2xl font-bold text-center">
+        Add stock to see into your Portfolio
+      </p>
+    );
+  }
   if (error) {
     return (
-      <p className="text-2xl text-red-600">
+      <p className="text-2xl text-red-600 text-center">
         Error while loading table please clear your cache and hard reload
       </p>
     );
@@ -81,8 +83,8 @@ const PortfolioTable = () => {
               </tr>
             </thead>
             <tbody>
-              {portfolioData &&
-                portfolioData.map((item) => (
+              {data?.portfolio &&
+                data?.portfolio.map((item) => (
                   <tr
                     key={item.symbol}
                     className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200"
@@ -96,9 +98,7 @@ const PortfolioTable = () => {
                     <td className="px-3 py-2">₹{item.purchasePrice}</td>
                     <td className="px-3 py-2">{item.quantity}</td>
                     <td className="px-3 py-2">₹{item.invested}</td>
-                    <td className="px-3 py-2">
-                      {item.portfolioPercentage}%
-                    </td>
+                    <td className="px-3 py-2">{item.portfolioPercentage}%</td>
                     <td className="px-3 py-2">{item.exchange}</td>
                     <td className="px-3 py-2">₹{item.cmp}</td>
                     <td className="px-3 py-2">₹{item.presentValue}</td>
@@ -140,7 +140,7 @@ const PortfolioTable = () => {
             </tbody>
           </table>
 
-          <PortfolioChart portfolioData={portfolioData ?? []} />
+          <PortfolioChart portfolioData={data?.portfolio ?? []} />
           <ToastContainer
             position="top-center"
             autoClose={5000}
