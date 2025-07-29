@@ -22,6 +22,7 @@ export const fetchPortfolio = createAsyncThunk<PortfolioResponse>(
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/api/getPortfolio`,
       {
+        withCredentials: true,
         headers: {
           Authorization: `Bearer ${auth.jwtToken}`,
         },
@@ -45,6 +46,7 @@ export const addPortfolio = createAsyncThunk(
         purchasePrice: formdata.purchasePrice,
       },
       {
+        withCredentials: true,
         headers: {
           Authorization: `Bearer ${auth.jwtToken}`,
         },
@@ -64,6 +66,7 @@ export const deletePortfolio = createAsyncThunk(
     await axios.delete(
       `${process.env.NEXT_PUBLIC_API_URL}/api/deletePortfolio/${id}`,
       {
+        withCredentials: true,
         headers: {
           Authorization: `${auth.jwtToken}`,
         },
@@ -87,6 +90,7 @@ export const updatePortfolio = createAsyncThunk(
         purchasePrice: formData.purchasePrice,
       },
       {
+        withCredentials: true,
         headers: {
           Authorization: `Bearer ${auth.jwtToken}`,
         },

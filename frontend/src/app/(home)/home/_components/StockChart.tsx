@@ -38,7 +38,9 @@ const StockChart = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/liveStock?symbol=${stock.symbol}&range=${validInterval}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/liveStock?symbol=${stock.symbol}&range=${validInterval}`,{
+          withCredentials:true,
+        }
       );
       setMeta(res.data.meta);
       setData(res.data.chartData);

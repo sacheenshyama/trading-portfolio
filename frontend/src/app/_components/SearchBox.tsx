@@ -36,7 +36,10 @@ const SearchBox: React.FC<serarchboxProp> = ({ setValue, defaultStock }) => {
     try {
       // console.log("Searching for:", str);
       const result = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/searchStock?q=${str}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/searchStock?q=${str}`,
+        {
+          withCredentials: true,
+        }
       );
       // console.log("Search result:", result.data.quotes);
       setResultData(result.data.quotes);

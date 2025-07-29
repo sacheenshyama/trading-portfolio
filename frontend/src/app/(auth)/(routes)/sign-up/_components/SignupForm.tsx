@@ -24,10 +24,19 @@ const SignupForm = () => {
     setLoading(true);
     setError("");
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/signup`, {
-        email: data.email,
-        password: data.password,
-      });
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/signup`,
+        {
+          email: data.email,
+          password: data.password,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       setLoading(false);
       router.push("/sign-in");
     } catch (error) {
