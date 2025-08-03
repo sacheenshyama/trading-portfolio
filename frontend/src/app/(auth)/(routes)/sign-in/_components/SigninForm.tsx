@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useSetCookie } from "cookies-next";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -56,7 +56,7 @@ const SigninForm = () => {
         dispatch(loginFailed(errorMessage));
       }
     } finally {
-      router.refresh();
+      redirect("/portfolio");
     }
   };
 

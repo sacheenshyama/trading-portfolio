@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.post("/signup", signup);
 router.post("/signin", signin);
-router.post("/logout", logout);
+router.post("/logout", authMiddleware, logout);
 
 // router.get("/stock", stock);
 router.get("/searchStock", searchStock);

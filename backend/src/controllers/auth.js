@@ -81,7 +81,11 @@ const logout = async (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     await redisClient.del(`session:${decoded.id}`);
-    res.clearCookie("jwtToken", { sameSite: NONAME, secure: true });
+    res.clearCookie("jwtToken", {
+      httpOnly: false,
+      sameSite: "None",
+      secure: true,
+    });
     res.status(200).json({ message: "logout successful" });
   } catch (error) {
     res.status(500).json({ error: "Logout failed" });
