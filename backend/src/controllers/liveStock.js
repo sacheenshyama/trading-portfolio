@@ -25,9 +25,9 @@ const getLiveStock = async (req, res) => {
 
 function formatForGoogleCharts(data) {
   return [
-    ["Date", "Open", "High", "Low", "Close"], // Header row
+    ["Date", "Open", "High", "Low", "Close"],
     ...data.map((item) => [
-      item.date.toISOString().split("T")[0], // Date (YYYY-MM-DD)
+      item.date.toISOString().split("T")[0], 
       item.open,
       item.high,
       item.low,

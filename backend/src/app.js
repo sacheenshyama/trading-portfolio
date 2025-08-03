@@ -5,6 +5,7 @@ const cors = require("cors");
 const app = express();
 const Routes = require("./routes/route");
 const morgan = require("morgan");
+const cookieParse = require("cookie-parser");
 const { METHODS } = require("http");
 
 const corsOptions = {
@@ -16,8 +17,9 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(morgan());
+app.use(morgan("dev"));
 app.use(express.json());
+app.use(cookieParse());
 
 app.use("/api", Routes);
 module.exports = app;

@@ -23,9 +23,6 @@ export const fetchPortfolio = createAsyncThunk<PortfolioResponse>(
       `${process.env.NEXT_PUBLIC_API_URL}/api/getPortfolio`,
       {
         withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${auth.jwtToken}`,
-        },
       }
     );
     return res.data;
@@ -47,9 +44,6 @@ export const addPortfolio = createAsyncThunk(
       },
       {
         withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${auth.jwtToken}`,
-        },
       }
     );
     dispatch(fetchPortfolio());
@@ -67,9 +61,6 @@ export const deletePortfolio = createAsyncThunk(
       `${process.env.NEXT_PUBLIC_API_URL}/api/deletePortfolio/${id}`,
       {
         withCredentials: true,
-        headers: {
-          Authorization: `${auth.jwtToken}`,
-        },
       }
     );
     dispatch(fetchPortfolio());
@@ -92,9 +83,6 @@ export const updatePortfolio = createAsyncThunk(
       },
       {
         withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${auth.jwtToken}`,
-        },
       }
     );
     dispatch(fetchPortfolio());
