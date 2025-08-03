@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { redisClient } = require("../config/redis");
 
 const signup = async (req, res) => {
   const { email, password } = req.body;
@@ -51,8 +52,12 @@ const signin = async (req, res) => {
         id: user._id,
         email: user.email,
       },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
     );
+    await redisClient.set(`session:${user._id}`, JSON.stringify(user), {
+      EX: 7 * 24 * 60 * 60 * 1000,
+    });
     res.cookie("jwtToken", token, {
       httpOnly: false,
       maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -65,8 +70,25 @@ const signin = async (req, res) => {
     });
   }
 };
+const logout = async (req, res) => {
+  const token =
+    req.cookies.jwtToken || req.headers.authorization?.split(" ")[1];
 
+  if (!token) {
+    return res.status(400).json({ error: "Token missing" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    await redisClient.del(`session:${decoded.id}`);
+    res.clearCookie("jwtToken", { sameSite: NONAME, secure: true });
+    res.status(200).json({ message: "logout successful" });
+  } catch (error) {
+    res.status(500).json({ error: "Logout failed" });
+  }
+};
 module.exports = {
   signup,
   signin,
+  logout,
 };
