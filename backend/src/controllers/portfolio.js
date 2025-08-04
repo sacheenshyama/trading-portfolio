@@ -1,6 +1,7 @@
 const yahooFinance = require("yahoo-finance2").default;
 const { redisClient } = require("../config/redis");
 const stockPortfolio = require("../models/portfolioStock");
+const ActivityLog = require("../models/ActivityLog");
 const createPortfolio = async (req, res) => {
   const { symbol, name, quantity, purchasePrice, exchange } = req.body;
   if (!req.user) {
@@ -10,7 +11,7 @@ const createPortfolio = async (req, res) => {
     if (!symbol || !name || !quantity || !purchasePrice || !exchange) {
       return res.status(400).json({ message: "please provide details" });
     }
-    await stockPortfolio.create({
+    const newStock = await stockPortfolio.create({
       symbol,
       name,
       quantity,
@@ -19,8 +20,21 @@ const createPortfolio = async (req, res) => {
       owner: req.user._id,
     });
 
-    const cacheKey = `portfolio:${req.user._id.toString()}`;
-    await redisClient.del(cacheKey);
+    await ActivityLog.create({
+      stockId: newStock._id,
+      owner: req.user._id,
+      symbol,
+      name,
+      quantity,
+      purchasePrice,
+      action: "CREATED",
+      message: "Stock added to portfolio",
+    });
+
+    const cacheKeyPortfolio = `portfolio:${req.user._id.toString()}`;
+    const cacheKeyActivityLog = `activityLog:${req.user._id.toString()}`;
+    await redisClient.del(cacheKeyActivityLog);
+    await redisClient.del(cacheKeyPortfolio);
 
     res.status(201).json({ message: "Portfolio created successfully" });
   } catch (error) {
@@ -136,6 +150,18 @@ const deletePortfolio = async (req, res) => {
     });
     if (!deleted) return res.status(403).json({ error: "Stock not found" });
 
+    await ActivityLog.create({
+      stockId: deleted._id,
+      owner: owner,
+      name: deleted.name,
+      symbol: deleted.symbol,
+      quantity: deleted.quantity,
+      purchasePrice: deleted.purchasePrice,
+      action: "DELETED",
+      message: "Stock deleted from portfolio",
+    });
+
+    await redisClient.del(`activityLog:${owner.toString()}`);
     await redisClient.del(`portfolio:${owner.toString()}`);
     res.status(200).json({ message: "stock deleted" });
   } catch (error) {
@@ -151,6 +177,13 @@ const updatePortfolio = async (req, res) => {
   }
   try {
     const { symbol, name, quantity, purchasePrice, exchange } = req.body;
+    const stock = await stockPortfolio
+      .findOne({
+        _id,
+        owner,
+      })
+      .lean();
+
     const updated = await stockPortfolio.findOneAndUpdate(
       {
         _id,
@@ -167,7 +200,25 @@ const updatePortfolio = async (req, res) => {
     if (!updated) {
       return res.status(403).json({ message: "Stock not found" });
     }
+
+    let message = "";
+    if (symbol !== stock.symbol) message += `Symbol changed & `;
+    if (quantity !== stock.quantity) message += `Quantiry changed & `;
+    if (purchasePrice !== stock.purchasePrice)
+      message += `Purchase Price changed`;
+
+    await ActivityLog.create({
+      stockId: updated._id,
+      owner: owner,
+      symbol,
+      purchasePrice,
+      quantity,
+      name,
+      action: "UPDATED",
+      message: message.trim(),
+    });
     await redisClient.del(`portfolio:${owner.toString()}`);
+    await redisClient.del(`activityLog:${owner.toString()}`);
     res.status(200).json({ message: "stock updated" });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -10,6 +10,10 @@ const {
 } = require("../controllers/portfolio");
 const authMiddleware = require("../middleware/auth");
 const { getLiveStock } = require("../controllers/liveStock");
+const {
+  getActivityLog,
+  deleteActivityLog,
+} = require("../controllers/activityLog");
 const router = express.Router();
 
 router.post("/signup", signup);
@@ -24,5 +28,8 @@ router.post("/createPortfolio", authMiddleware, createPortfolio);
 router.get("/getPortfolio", authMiddleware, getPortfolio);
 router.delete("/deletePortfolio/:id", authMiddleware, deletePortfolio);
 router.put("/updatePortfolio/:id", authMiddleware, updatePortfolio);
+
+router.get("/getActivity", authMiddleware, getActivityLog);
+router.delete("/deleteActivity", authMiddleware, deleteActivityLog);
 
 module.exports = router;
