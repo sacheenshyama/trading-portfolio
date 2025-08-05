@@ -86,7 +86,7 @@ const getPortfolio = async (req, res) => {
             invested: invested,
             cmp: cmp,
             id: stock._id,
-            presentValue: currentValue.toFixed(2),
+            presentValue: currentValue,
             gainLoss: gainLoss.toFixed(2),
             gainLossPercent: gainLossPercent.toFixed(2),
             peRatio: quote.trailingPE || quote.forwardPE || "N/A",
@@ -114,8 +114,8 @@ const getPortfolio = async (req, res) => {
     }));
 
     const summary = {
-      totalInvested: totalInvested.toFixed(2),
-      totalCurrentValue: totalCurrentValue.toFixed(2),
+      totalInvested: totalInvested,
+      totalCurrentValue: totalCurrentValue,
       totalGainLoss: totalCurrentValue - totalInvested,
       totalGainLossPercent:
         totalInvested > 0

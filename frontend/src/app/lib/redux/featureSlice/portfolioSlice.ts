@@ -2,6 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { PortfolioResponse, PortfolioStockInput } from "../../types";
 import axios from "axios";
 import { RootState } from "../store";
+// import { cookies } from "next/headers";
+import { getCookie } from "cookies-next/client";
 
 interface PortfolioState {
   data: PortfolioResponse | null;
@@ -17,8 +19,7 @@ const initialState: PortfolioState = {
 // fetch api call
 export const fetchPortfolio = createAsyncThunk<PortfolioResponse>(
   "/api/getPortfolio",
-  async (_, { getState }) => {
-    const { auth } = getState() as RootState;
+  async () => {
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/api/getPortfolio`,
       {
@@ -30,9 +31,9 @@ export const fetchPortfolio = createAsyncThunk<PortfolioResponse>(
 );
 export const addPortfolio = createAsyncThunk(
   "/api/createPortfolio",
-  async (formdata: PortfolioStockInput, { getState, dispatch }) => {
-    const { auth } = getState() as RootState;
-    if (!auth.jwtToken) return "Login to see data";
+  async (formdata: PortfolioStockInput, { dispatch }) => {
+    const jwtToken = getCookie("jwtToken");
+    if (!jwtToken) return "Login to see data";
     const res = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/api/createPortfolio`,
       {
@@ -54,9 +55,9 @@ export const addPortfolio = createAsyncThunk(
 export const deletePortfolio = createAsyncThunk(
   "/api/deletePortfolio",
 
-  async (id: string, { getState, dispatch }) => {
-    const { auth } = getState() as RootState;
-    if (!auth.jwtToken) return "Login to see data";
+  async (id: string, { dispatch }) => {
+    const jwtToken = getCookie("jwtToken");
+    if (!jwtToken) return "Login to see data";
     await axios.delete(
       `${process.env.NEXT_PUBLIC_API_URL}/api/deletePortfolio/${id}`,
       {
@@ -68,10 +69,9 @@ export const deletePortfolio = createAsyncThunk(
 );
 export const updatePortfolio = createAsyncThunk(
   "/api/updatePortfolio/:id",
-  async (formData: PortfolioStockInput, { getState, dispatch }) => {
-    const { auth } = getState() as RootState;
-    // console.log("updatestock...", formData);
-    if (!auth.jwtToken) return "Login to see data";
+  async (formData: PortfolioStockInput, { dispatch }) => {
+    const jwtToken = getCookie("jwtToken");
+    if (!jwtToken) return "Login to see data";
     await axios.put(
       `${process.env.NEXT_PUBLIC_API_URL}/api/updatePortfolio/${formData.id}`,
       {

@@ -12,13 +12,14 @@ import { redirect, useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { signIn } from "next-auth/react";
+import { FcGoogle } from "react-icons/fc";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 const SigninForm = () => {
-  const router = useRouter();
   const setCookies = useSetCookie();
   const error = useAppSelector((state) => state.auth.error);
   const loading = useAppSelector((state) => state.auth.loading);
@@ -118,6 +119,14 @@ const SigninForm = () => {
         >
           {loading ? "Singing in...." : "Sing In"}
         </button>
+      </div>
+      <div className="flex justify-center">
+        <p
+          onClick={() => signIn("google", { callbackUrl: "/portfolio" })}
+          className="flex justify-center items-center rounded-lg shadow w-12 h-8"
+        >
+          <FcGoogle className="w-4 h-4" />
+        </p>
       </div>
     </form>
   );

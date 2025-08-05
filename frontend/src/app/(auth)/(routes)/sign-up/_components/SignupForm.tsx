@@ -4,7 +4,9 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { FcGoogle } from "react-icons/fc";
 import { z } from "zod";
+import { signIn } from "next-auth/react";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
@@ -106,6 +108,14 @@ const SignupForm = () => {
         >
           {loading ? "Creating account…" : "Create Account"}
         </button>
+      </div>
+      <div className="flex justify-center">
+        <p
+          onClick={() => signIn("google", { callbackUrl: "/portfolio" })}
+          className="flex justify-center items-center rounded-lg shadow w-12 h-8"
+        >
+          <FcGoogle className="w-4 h-4" />
+        </p>
       </div>
     </form>
   );

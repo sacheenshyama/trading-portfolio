@@ -27,7 +27,14 @@ const Navbar = () => {
     } catch (error) {
       console.log("eror in logout:", error);
     } finally {
+      deleteCookie("next-auth.callback-url");
+      deleteCookie("next-auth.csrf-token");
+      deleteCookie("next-auth.pkce.code_verifier");
+      deleteCookie("next-auth.session-token");
+      deleteCookie("next-auth.state");
+
       deleteCookie("jwtToken");
+
       localStorage.removeItem("persist:root");
       setIsLoggedIn(false);
       redirect("/home");
