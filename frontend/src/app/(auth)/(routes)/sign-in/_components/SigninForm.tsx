@@ -53,8 +53,9 @@ const SigninForm = () => {
         }
       );
       setCookies("jwtToken", res.data.token);
-      dispatch(loginSuccess(res.data.token));
       redirect("/portfolio");
+
+      dispatch(loginSuccess(res.data.token));
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 444) {
         setOtpStage(true);
@@ -67,8 +68,6 @@ const SigninForm = () => {
         const errorMessage = "Failed to sign in";
         dispatch(loginFailed(errorMessage));
       }
-    } finally {
-      redirect("/portfolio");
     }
   };
 
