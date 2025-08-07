@@ -14,18 +14,11 @@ const page = () => {
             <h2 className=" text-center text-3xl font-extrabold text-gray-900">
               Ready to see green? Enter your credentials.
             </h2>
-            <p className="mt-2 text-center text-sm text-gray-600 max-w">
-              Or{" "}
-              <Link
-                href="/sign-up"
-                className="font-medium text-blue-600 hover:text-blue-500"
-              >
-                create an account
-              </Link>
-            </p>
-            <h2 className="text-center text-2xl font-bold">Sign In</h2>
+           
+         
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
               <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                   <h2 className="text-center text-2xl font-bold">Sign In</h2>
                 <SigninForm />
               </div>
             </div>

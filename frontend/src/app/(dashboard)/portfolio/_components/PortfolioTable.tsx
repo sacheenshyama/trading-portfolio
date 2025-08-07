@@ -12,6 +12,7 @@ import {
 } from "@/app/lib/redux/featureSlice/portfolioSlice";
 import { PortfolioStockInput } from "@/app/lib/types";
 import { Mosaic } from "react-loading-indicators";
+import StockHoldingForm from "./StockHoldingForm";
 
 const PortfolioTable = () => {
   const dispatch = useAppDispatch();
@@ -38,29 +39,36 @@ const PortfolioTable = () => {
   const handleDelete = async (id: string) => {
     dispatch(deletePortfolio(id));
   };
-  if (!data) {
-    return (
-      <p className="text-2xl font-bold text-center">
-        Add stock to see into your Portfolio
-      </p>
-    );
-  }
-  if (error) {
-    return (
-      <p className="text-2xl text-red-600 text-center">
-        Error while loading table please clear your cache and hard reload
-      </p>
-    );
-  }
+  // if (!data) {
+  //   return (
+  //     <p className="text-2xl font-bold text-center">
+  //       Add stock to see into your Portfolio
+  //     </p>
+  //   );
+  // }
+  // if (error) {
+  //   return (
+  //     <p className="text-2xl text-red-600 text-center">
+  //       Error while loading table please clear your cache and hard reload
+  //     </p>
+  //   );
+  // }
   return (
-    <div className="relative   sm:rounded-lg">
+    <div className="max-h-full container">
+      <h2 className="text-2xl font-bold mt-5 mb-2">My Portfolio</h2>
+      <StockHoldingForm />
+      {error && (
+        <p className="text-2xl text-red-600 text-center">
+          Error while loading table please clear your cache and hard reload
+        </p>
+      )}
       {loading ? (
         <span className="absolute left-5/12">
           <Mosaic color="#000" size="large" text="" textColor="" />{" "}
         </span>
       ) : (
         <div>
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <table className="w-full overflow-x-scroll text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs font-bold text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
                 {[
@@ -98,9 +106,11 @@ const PortfolioTable = () => {
                     <td className="px-3 py-2">₹{item.purchasePrice}</td>
                     <td className="px-3 py-2">{item.quantity}</td>
                     <td className="px-3 py-2">₹{item.invested}</td>
-                    <td className="px-3 py-2">{item.portfolioPercentage}%</td>
+                    <td className="px-3 py-2">
+                      {item.portfolioPercentage.toFixed(2)}%
+                    </td>
                     <td className="px-3 py-2">{item.exchange}</td>
-                    <td className="px-3 py-2">₹{item.cmp}</td>
+                    <td className="px-3 py-2">₹{item.cmp.toFixed(2)}</td>
                     <td className="px-3 py-2">₹{item.presentValue}</td>
                     <td className="px-3 py-2">{item.peRatio}</td>
                     <td

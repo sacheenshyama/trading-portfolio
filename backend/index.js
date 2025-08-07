@@ -1,20 +1,26 @@
 require("dotenv").config();
 const http = require("http");
 const mongoose = require("mongoose");
+// const { connectRedis } = require("./src/config/redis");
 const app = require("./src/app");
+const { connectRedis } = require("./src/config/redis");
 
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT || 4000;
-mongoose
-  .connect(MONGO_URL)
-  .then(() => {
+
+async function startServer() {
+  try {
+    await mongoose.connect(MONGO_URL);
+    console.log("Connected to MongoDB");
+    await connectRedis();
     const server = http.createServer(app);
     server.listen(PORT, () => {
-      console.log("Server is running on port 4000");
+      console.log("Server is running");
     });
-    console.log("Connected to MongoDB");
-  })
-  .catch((err) => {
-    console.error("Error connecting to MongoDB:", err);
+  } catch (error) {
+    console.error("Error starting server:", error);
     process.exit(1);
-  });
+  }
+}
+
+startServer();

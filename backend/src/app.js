@@ -5,10 +5,11 @@ const cors = require("cors");
 const app = express();
 const Routes = require("./routes/route");
 const morgan = require("morgan");
+const cookieParse = require("cookie-parser");
 const { METHODS } = require("http");
 
 const corsOptions = {
-  origin: ["https://trading-portfolio-one.vercel.app", "http://localhost:3000"],
+  origin: [process.env.FRONTEND_URL, "http://localhost:3000"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -16,8 +17,9 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(morgan());
+app.use(morgan("dev"));
 app.use(express.json());
+app.use(cookieParse());
 
 app.use("/api", Routes);
 module.exports = app;

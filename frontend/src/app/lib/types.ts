@@ -88,3 +88,16 @@ export interface SelectedStock {
   symbol: string;
   typeDisp: string;
 }
+
+export interface ActivityLog {
+  stockId: string;
+  owner: string;
+  symbol: string;
+  name: string;
+  quantity: number;
+  purchasePrice: number;
+  action: "CREATED" | "UPDATED" | "DELETED";
+  message: string;
+  _id: string;
+  createdAt: string;
+}

@@ -1,7 +1,8 @@
 "use client";
+import axios from "axios";
 import { useDeleteCookie, useHasCookie } from "cookies-next";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 import { FaDeviantart } from "react-icons/fa";
@@ -18,11 +19,26 @@ const Navbar = () => {
       setIsLoggedIn(jwtToken);
     }
   }, [jwtToken]);
-  const handleLogout = () => {
-    deleteCookie("jwtToken");
-    localStorage.removeItem("persist:root");
-    setIsLoggedIn(false);
-    router.push("/home");
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/logout`, null, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      console.log("eror in logout:", error);
+    } finally {
+      deleteCookie("next-auth.callback-url");
+      deleteCookie("next-auth.csrf-token");
+      deleteCookie("next-auth.pkce.code_verifier");
+      deleteCookie("next-auth.session-token");
+      deleteCookie("next-auth.state");
+
+      deleteCookie("jwtToken");
+
+      localStorage.removeItem("persist:root");
+      setIsLoggedIn(false);
+      redirect("/home");
+    }
   };
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
@@ -67,7 +83,7 @@ const Navbar = () => {
           id="navbar-default"
         >
           <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            {["home", "portfolio"].map((item, idx) => (
+            {["home", "portfolio", "activity"].map((item, idx) => (
               <li key={idx} className="font-bold">
                 <Link
                   href={`${item}`}
