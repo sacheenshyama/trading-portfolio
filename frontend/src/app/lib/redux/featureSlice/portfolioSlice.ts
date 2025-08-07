@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { PortfolioResponse, PortfolioStockInput } from "../../types";
 import axios from "axios";
-import { RootState } from "../store";
+// import { RootState } from "../store";
 // import { cookies } from "next/headers";
 import { getCookie } from "cookies-next/client";
 
