@@ -78,6 +78,7 @@ const OtpForm: React.FC<otpFormProp> = ({ givenEmail }) => {
       setCookies("jwtToken", res.data.token);
       setOtpReqLoad(false);
       router.push("/portfolio");
+      window.location.reload();
     } catch (error) {
       setOtpReqLoad(false);
 

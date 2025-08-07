@@ -60,6 +60,7 @@ const SigninForm = () => {
       setCookies("jwtToken", res.data.token);
       // redirect("/portfolio");
       router.push("/portfolio");
+      window.location.reload();
     } catch (error) {
       setLoading(false);
       if (axios.isAxiosError(error) && error.response?.status === 444) {
