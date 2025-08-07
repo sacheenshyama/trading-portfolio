@@ -121,7 +121,7 @@ const oAuthLogin = async (req, res) => {
       );
 
       await redisClient.set(`session:${newUser._id}`, JSON.stringify(newUser), {
-        EX: 7 * 24 * 60 * 60 * 1000,
+        EX: 7 * 24 * 60 * 60,
       });
 
       res.cookie("jwtToken", token, {
@@ -147,7 +147,7 @@ const oAuthLogin = async (req, res) => {
       `session:${existingUser._id}`,
       JSON.stringify(existingUser),
       {
-        EX: 7 * 24 * 60 * 60 * 1000,
+        EX: 7 * 24 * 60 * 60 ,
       }
     );
 
