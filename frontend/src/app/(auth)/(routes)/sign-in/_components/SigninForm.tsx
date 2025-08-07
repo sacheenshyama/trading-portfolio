@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useSetCookie } from "cookies-next";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -16,6 +16,7 @@ import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 import OtpForm from "../../_components/OtpForm";
+import { CgSpinner } from "react-icons/cg";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
@@ -23,8 +24,11 @@ const schema = z.object({
 });
 const SigninForm = () => {
   const setCookies = useSetCookie();
+  const router = useRouter();
   const error = useAppSelector((state) => state.auth.error);
-  const loading = useAppSelector((state) => state.auth.loading);
+  // const loading = useAppSelector((state) => state.auth.loading);
+  // const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [otpStage, setOtpStage] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
@@ -37,7 +41,7 @@ const SigninForm = () => {
   const { email } = watch();
 
   const onsubmit = async (data: { email: string; password: string }) => {
-    dispatch(loginStart());
+    setLoading(true);
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/signin`,
@@ -52,21 +56,24 @@ const SigninForm = () => {
           },
         }
       );
+      setLoading(false);
       setCookies("jwtToken", res.data.token);
-      redirect("/portfolio");
-
-      dispatch(loginSuccess(res.data.token));
+      // redirect("/portfolio");
+      router.push("/portfolio");
     } catch (error) {
+      setLoading(false);
       if (axios.isAxiosError(error) && error.response?.status === 444) {
         setOtpStage(true);
       }
       if (axios.isAxiosError(error)) {
         const errorMessage =
           error.response?.data.message || "Failed to sign in";
+        // setError(errorMessage);
         dispatch(loginFailed(errorMessage));
       } else {
         const errorMessage = "Failed to sign in";
         dispatch(loginFailed(errorMessage));
+        // setError(errorMessage);
       }
     }
   };
@@ -126,12 +133,12 @@ const SigninForm = () => {
           </div>
 
           <div>
-            {error && <p className="text-red-500">{error}</p>}
+            {error && <p className="text-red-600">{error}</p>}
             <button
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-700"
             >
-              {loading ? "Singing in...." : "Sing In"}
+              {loading ? <CgSpinner className="animate-spin" /> : "Sing In"}
             </button>
           </div>
           <p className="mt-2 text-center text-sm text-gray-600 max-w">

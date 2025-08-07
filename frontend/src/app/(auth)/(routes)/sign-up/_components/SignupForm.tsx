@@ -8,6 +8,7 @@ import { z } from "zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import OtpForm from "../../_components/OtpForm";
+import { CgSpinner } from "react-icons/cg";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
@@ -117,7 +118,11 @@ const SignupForm = () => {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             >
-              {loading ? "Creating account…" : "Create Account"}
+              {loading ? (
+                <CgSpinner className="animate-spin" />
+              ) : (
+                "Create Account"
+              )}
             </button>
           </div>
           <p className="mt-2 text-center text-sm text-gray-600 max-w">

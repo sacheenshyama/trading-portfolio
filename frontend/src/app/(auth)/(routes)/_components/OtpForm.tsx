@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { useSetCookie } from "cookies-next";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
 import { CgSpinner } from "react-icons/cg";
 
@@ -11,6 +11,7 @@ interface otpFormProp {
 
 const OtpForm: React.FC<otpFormProp> = ({ givenEmail }) => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
+  const router = useRouter();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [resendOtpError, setResenOtpError] = useState("");
   const [otpReqLoad, setOtpReqLoad] = useState(false);
@@ -76,6 +77,7 @@ const OtpForm: React.FC<otpFormProp> = ({ givenEmail }) => {
       );
       setCookies("jwtToken", res.data.token);
       setOtpReqLoad(false);
+      router.push("/portfolio");
     } catch (error) {
       setOtpReqLoad(false);
 
@@ -84,8 +86,6 @@ const OtpForm: React.FC<otpFormProp> = ({ givenEmail }) => {
       } else {
         console.log("Unexpected error", error);
       }
-    } finally {
-      redirect("/portfolio");
     }
   };
 
