@@ -129,6 +129,7 @@ const oAuthLogin = async (req, res) => {
         httpOnly: false,
         secure: true,
         sameSite: "None",
+        secure: process.env.NODE_ENV === "production",
       });
       return res.status(201).json({
         token,
@@ -148,7 +149,7 @@ const oAuthLogin = async (req, res) => {
       `session:${existingUser._id}`,
       JSON.stringify(existingUser),
       {
-        EX: 7 * 24 * 60 * 60 ,
+        EX: 7 * 24 * 60 * 60,
       }
     );
 
@@ -156,6 +157,7 @@ const oAuthLogin = async (req, res) => {
       httpOnly: false,
       maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: "None",
+      secure: process.env.NODE_ENV === "production",
     });
 
     res.status(200).json({ token, id: existingUser._id });
@@ -225,6 +227,7 @@ const verifyOtp = async (req, res) => {
       httpOnly: false,
       maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: "None",
+      secure: process.env.NODE_ENV === "production",
     });
 
     res.status(200).json({ token, id: user._id });
