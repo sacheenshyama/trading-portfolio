@@ -134,14 +134,14 @@ const SignupForm = () => {
               Sign-in to an existing account
             </Link>
           </p>
-          <div className="flex justify-center">
+          {/* <div className="flex justify-center">
             <p
               onClick={() => signIn("google", { callbackUrl: "/portfolio" })}
               className="flex justify-center items-center rounded-lg shadow w-12 h-8"
             >
               <FcGoogle className="w-4 h-4" />
             </p>
-          </div>
+          </div> */}
         </form>
       )}
     </>

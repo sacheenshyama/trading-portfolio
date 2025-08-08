@@ -7,7 +7,9 @@ const authMiddleware = async (req, res, next) => {
 
   const token =
     req.cookies.jwtToken || req.header("Authorization")?.replace("Bearer ", "");
-  if (!token) return res.status(401).json({ req: req, error: "Access denied" });
+  if (!token) {
+    return res.status(401).json({  error: "Access denied" });
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
