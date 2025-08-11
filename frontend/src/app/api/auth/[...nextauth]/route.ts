@@ -23,7 +23,7 @@ const handler = NextAuth({
           console.log("No email found in profile");
           return false;
         }
-        const res = await axios.post(
+        const resp = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/api/oAuthLogin`,
           {
             profile,
@@ -32,8 +32,8 @@ const handler = NextAuth({
             withCredentials: true,
           }
         );
-
-        (await cookies()).set("jwtToken", res.data.token);
+          // console.log("check",resp)
+        (await cookies()).set("jwtToken", resp.data.token);
 
         return true;
       } catch (error) {
