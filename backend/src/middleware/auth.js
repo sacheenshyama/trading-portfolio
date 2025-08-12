@@ -4,7 +4,7 @@ const { redisClient } = require("../config/redis");
 
 const authMiddleware = async (req, res, next) => {
   // const token = req.header("Authorization")?.replace("Bearer ", "");
-  console.log("midl", req.cookies);
+  // console.log("midl", req.cookies);
   const token =
     req.cookies.jwtToken || req.header("Authorization")?.replace("Bearer ", "");
   if (!token) {
