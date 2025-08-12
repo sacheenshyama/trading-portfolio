@@ -8,15 +8,16 @@ import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useSetCookie } from "cookies-next";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 import OtpForm from "../../_components/OtpForm";
 import { CgSpinner } from "react-icons/cg";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../../../../../firebase-config";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
@@ -26,7 +27,7 @@ const SigninForm = () => {
   const setCookies = useSetCookie();
   const router = useRouter();
   const error = useAppSelector((state) => state.auth.error);
-  // const loading = useAppSelector((state) => state.auth.loading);
+  // const GGloading = useAppSelector((state) => state.auth.loading);
   // const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [otpStage, setOtpStage] = useState<boolean>(false);
@@ -59,6 +60,50 @@ const SigninForm = () => {
       setLoading(false);
       setCookies("jwtToken", res.data.token);
       // redirect("/portfolio");
+      router.push("/portfolio");
+      window.location.reload();
+    } catch (error) {
+      setLoading(false);
+      if (axios.isAxiosError(error) && error.response?.status === 444) {
+        setOtpStage(true);
+      }
+      if (axios.isAxiosError(error)) {
+        const errorMessage =
+          error.response?.data.message || "Failed to sign in";
+        // setError(errorMessage);
+        dispatch(loginFailed(errorMessage));
+      } else {
+        const errorMessage = "Failed to sign in";
+        dispatch(loginFailed(errorMessage));
+        // setError(errorMessage);
+      }
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    //  await dispatch(googleSignIn());
+    setLoading(true);
+    const provider = new GoogleAuthProvider();
+
+    try {
+      const result = await signInWithPopup(auth, provider);
+      // console.log("result", result.user);
+      const profile = {
+        email_verified: result.user.emailVerified,
+        email: result.user.email,
+      };
+      // console.log(profile)
+      const resp = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/oAuthLogin`,
+        {
+          profile,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      setLoading(false);
+      setCookies("jwtToken", resp.data.token);
       router.push("/portfolio");
       window.location.reload();
     } catch (error) {
@@ -152,12 +197,17 @@ const SigninForm = () => {
             </Link>
           </p>
           <div className="flex justify-center">
-            <p
-              onClick={() => signIn("google", { callbackUrl: "/portfolio" })}
-              className="flex justify-center items-center rounded-lg shadow w-12 h-8"
+            <button
+              disabled={loading}
+              onClick={handleGoogleLogin}
+              className="flex justify-center items-center rounded-lg shadow w-full border border-gray-200 p-3"
             >
-              <FcGoogle className="w-4 h-4" />
-            </p>
+              {loading ? (
+                <CgSpinner className="animate-spin" />
+              ) : (
+                <FcGoogle className={` w-4 h-4`} />
+              )}
+            </button>
           </div>
         </form>
       )}{" "}

@@ -5,10 +5,15 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { z } from "zod";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
 import OtpForm from "../../_components/OtpForm";
 import { CgSpinner } from "react-icons/cg";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../../../../../firebase-config";
+import { useSetCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/app/lib/redux/hooks";
+import { loginFailed } from "@/app/lib/redux/featureSlice/authSlice";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
@@ -16,6 +21,10 @@ const schema = z.object({
 });
 const SignupForm = () => {
   const [loading, setLoading] = useState(false);
+  const setCookies = useSetCookie();
+  const dispatch = useAppDispatch();
+
+  const router = useRouter();
   const [error, setError] = useState("");
   const [otpStage, setOtpStage] = useState<boolean>(false);
   const {
@@ -55,7 +64,49 @@ const SignupForm = () => {
       }
     }
   };
+  const handleGoogleLogin = async () => {
+    //  await dispatch(googleSignIn());
+    setLoading(true);
+    const provider = new GoogleAuthProvider();
 
+    try {
+      const result = await signInWithPopup(auth, provider);
+      // console.log("result", result.user);
+      const profile = {
+        email_verified: result.user.emailVerified,
+        email: result.user.email,
+      };
+      // console.log(profile)
+      const resp = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/oAuthLogin`,
+        {
+          profile,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      setLoading(false);
+      setCookies("jwtToken", resp.data.token);
+      router.push("/portfolio");
+      window.location.reload();
+    } catch (error) {
+      setLoading(false);
+      if (axios.isAxiosError(error) && error.response?.status === 444) {
+        setOtpStage(true);
+      }
+      if (axios.isAxiosError(error)) {
+        const errorMessage =
+          error.response?.data.message || "Failed to sign in";
+        // setError(errorMessage);
+        dispatch(loginFailed(errorMessage));
+      } else {
+        const errorMessage = "Failed to sign in";
+        dispatch(loginFailed(errorMessage));
+        // setError(errorMessage);
+      }
+    }
+  };
   return (
     <>
       {otpStage ? (
@@ -63,6 +114,9 @@ const SignupForm = () => {
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <h2 className="text-center text-2xl font-bold ">Sign Up</h2>
+          <p className="text-gray-500 text-center text-sm">
+            please sign-up with your valid gmail becasue we will send otp
+          </p>
           <div>
             <label
               htmlFor="email"
@@ -135,12 +189,17 @@ const SignupForm = () => {
             </Link>
           </p>
           <div className="flex justify-center">
-            <p
-              onClick={() => signIn("google", { callbackUrl: "/portfolio" })}
-              className="flex justify-center items-center rounded-lg shadow w-12 h-8"
+            <button
+              disabled={loading}
+              onClick={handleGoogleLogin}
+              className="flex justify-center items-center rounded-lg shadow w-full border border-gray-200 p-3"
             >
-              <FcGoogle className="w-4 h-4" />
-            </p>
+              {loading ? (
+                <CgSpinner className="animate-spin" />
+              ) : (
+                <FcGoogle className={` w-4 h-4`} />
+              )}
+            </button>
           </div>
         </form>
       )}
