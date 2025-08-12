@@ -8,7 +8,6 @@ const authMiddleware = async (req, res, next) => {
   const token =
     req.cookies.jwtToken || req.header("Authorization")?.replace("Bearer ", "");
   if (!token) {
-    console.log(req);
     return res.status(401).json({ error: "Access denied" });
   }
 
