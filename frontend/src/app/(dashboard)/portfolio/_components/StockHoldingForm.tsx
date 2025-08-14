@@ -1,7 +1,7 @@
 "use client";
 import SearchBox from "@/app/_components/SearchBox";
-import { addPortfolio } from "@/app/lib/redux/featureSlice/portfolioSlice";
 import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
+import { addPortfolio } from "@/app/lib/redux/services/portfolio";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -36,6 +36,7 @@ const StockHoldingForm = () => {
   const total = buyPrice && quantity ? buyPrice * quantity : 0;
 
   const onSubmit = () => {
+    // console.log("api hit create frm form");
     dispatch(
       addPortfolio({
         symbol: stock.symbol,

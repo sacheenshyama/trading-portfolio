@@ -1,6 +1,6 @@
 import SearchBox from "@/app/_components/SearchBox";
-import { updatePortfolio } from "@/app/lib/redux/featureSlice/portfolioSlice";
 import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
+import { updatePortfolio } from "@/app/lib/redux/services/portfolio";
 import { PortfolioStockInput } from "@/app/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";

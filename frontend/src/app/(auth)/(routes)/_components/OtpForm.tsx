@@ -1,4 +1,6 @@
 "use client";
+import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
+import { otpSignIn } from "@/app/lib/redux/services/authApi";
 import axios from "axios";
 import { useSetCookie } from "cookies-next";
 import { redirect, useRouter } from "next/navigation";
@@ -13,11 +15,11 @@ const OtpForm: React.FC<otpFormProp> = ({ givenEmail }) => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const router = useRouter();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const [resendOtpError, setResenOtpError] = useState("");
+  const { jwtToken } = useAppSelector((state) => state.auth);
   const [otpReqLoad, setOtpReqLoad] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
-  const setCookies = useSetCookie();
 
+  const dispatch = useAppDispatch();
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number
@@ -35,6 +37,12 @@ const OtpForm: React.FC<otpFormProp> = ({ givenEmail }) => {
     }
   };
 
+  useEffect(() => {
+    if (jwtToken) {
+      router.push("/portfolio");
+    }
+  }, [jwtToken]);
+
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
     index: number
@@ -45,49 +53,11 @@ const OtpForm: React.FC<otpFormProp> = ({ givenEmail }) => {
     }
   };
 
-  // const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-  //   e.preventDefault();
-  //   const pasteData = e.clipboardData.getData("text/plain").slice(0, 6);
-  //   const pasteArray = pasteData.split("");
-
-  //   if (pasteArray.every((item) => /^\d$/.test(item))) {
-  //     const newOtp = [...otp];
-  //     pasteArray.forEach((digit, i) => {
-  //       if (i < 6) newOtp[i] = digit;
-  //     });
-  //     setOtp(newOtp);
-  //   }
-  // };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setOtpReqLoad(true);
-
     const otpValue = otp.join("");
-    try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/verifyOtp`,
-        {
-          email: givenEmail,
-          otp: otpValue,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      setCookies("jwtToken", res.data.token);
-      setOtpReqLoad(false);
-      router.push("/portfolio");
-      window.location.reload();
-    } catch (error) {
-      setOtpReqLoad(false);
-
-      if (error instanceof Error) {
-        console.log("eror duirng otp verificaiont", error);
-      } else {
-        console.log("Unexpected error", error);
-      }
-    }
+    // console.log("otp form check", givenEmail, otpValue);
+    await dispatch(otpSignIn({ givenEmail, otpValue }));
   };
 
   const handleRequestOtp = async () => {
@@ -98,7 +68,7 @@ const OtpForm: React.FC<otpFormProp> = ({ givenEmail }) => {
       });
       setOtpLoading(false);
     } catch {
-      setResenOtpError("Error in Resend otp Request");
+      // setResenOtpError("Error in Resend otp Request");
       setOtpLoading(false);
     }
   };

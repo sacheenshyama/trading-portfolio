@@ -6,13 +6,14 @@ import { Bounce, ToastContainer } from "react-toastify";
 import UpdateStock from "./UpdateStock";
 import PortfolioChart from "./PortfolioChart";
 import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
-import {
-  deletePortfolio,
-  fetchPortfolio,
-} from "@/app/lib/redux/featureSlice/portfolioSlice";
+
 import { PortfolioStockInput } from "@/app/lib/types";
 import { Mosaic } from "react-loading-indicators";
 import StockHoldingForm from "./StockHoldingForm";
+import {
+  deletePortfolio,
+  fetchPortfolio,
+} from "@/app/lib/redux/services/portfolio";
 
 const PortfolioTable = () => {
   const dispatch = useAppDispatch();

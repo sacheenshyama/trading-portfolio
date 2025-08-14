@@ -59,7 +59,7 @@ const getPortfolio = async (req, res) => {
       })
       .lean();
     if (portfolioStock.length === 0) {
-      return res.status(404).json({ message: "No portfolio found" });
+      return res.status(203).json([]);
     }
 
     let portfolioResult = [];
@@ -128,7 +128,7 @@ const getPortfolio = async (req, res) => {
     };
     const result = { summary, portfolio: holdingsWithPercent };
 
-    await redisClient.set(cacheKey, JSON.stringify(result), {"EX": 5 * 60});
+    await redisClient.set(cacheKey, JSON.stringify(result), { EX: 5 * 60 });
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({

@@ -80,7 +80,7 @@ const signin = async (req, res) => {
       sameSite: "None",
       secure: process.env.NODE_ENV === "production",
     });
-    res.status(200).json({ token, id: user._id });
+    res.status(200).json({ jwtToken: token, id: user._id });
   } catch (error) {
     res.status(500).json({
       message: error.message || "An error occurred while signing in",
@@ -132,7 +132,7 @@ const oAuthLogin = async (req, res) => {
         secure: process.env.NODE_ENV === "production",
       });
       return res.status(201).json({
-        token,
+        jwtToken: token,
         id: newUser._id,
       });
     }
@@ -160,7 +160,7 @@ const oAuthLogin = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
     });
 
-    res.status(200).json({ token, id: existingUser._id });
+    res.status(200).json({ jwtToken: token, id: existingUser._id });
   } catch (error) {
     console.error("OAuth login error:", error);
     res.status(500).json({
@@ -189,7 +189,6 @@ async function requestOtp(req, res) {
 
 const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
-
   if (!email || !otp) {
     return res.status(400).json({ error: "email or otp not provided" });
   }
@@ -211,7 +210,6 @@ const verifyOtp = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-
     const token = jwt.sign(
       {
         id: user._id,
@@ -220,9 +218,11 @@ const verifyOtp = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
+
     await redisClient.set(`session:${user._id}`, JSON.stringify(user), {
       EX: 7 * 24 * 60 * 60,
     });
+
     res.cookie("jwtToken", token, {
       httpOnly: false,
       maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -230,7 +230,7 @@ const verifyOtp = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
     });
 
-    res.status(200).json({ token, id: user._id });
+    res.status(200).json({ jwtToken: token, id: user._id });
   } catch (error) {
     console.log(error || "error in verifyOtp");
     res.status(500).json({ message: error });

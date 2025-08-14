@@ -1,23 +1,19 @@
 "use client";
-import {
-  loginFailed,
-  loginStart,
-  loginSuccess,
-} from "@/app/lib/redux/featureSlice/authSlice";
 import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { useSetCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 import OtpForm from "../../_components/OtpForm";
 import { CgSpinner } from "react-icons/cg";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../../../../../../firebase-config";
+import {
+  googleSignInUser,
+  simpleSignIn,
+} from "@/app/lib/redux/services/authApi";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
@@ -26,10 +22,7 @@ const schema = z.object({
 const SigninForm = () => {
   const setCookies = useSetCookie();
   const router = useRouter();
-  const error = useAppSelector((state) => state.auth.error);
-  // const GGloading = useAppSelector((state) => state.auth.loading);
-  // const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { loading, error, jwtToken } = useAppSelector((state) => state.auth);
   const [otpStage, setOtpStage] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
@@ -41,89 +34,59 @@ const SigninForm = () => {
   } = useForm({ resolver: zodResolver(schema) });
   const { email } = watch();
 
-  const onsubmit = async (data: { email: string; password: string }) => {
-    setLoading(true);
-    try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/signin`,
-        {
-          email: data.email,
-          password: data.password,
-        },
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setLoading(false);
-      setCookies("jwtToken", res.data.token);
-      // redirect("/portfolio");
+  useEffect(() => {
+    if (jwtToken) {
       router.push("/portfolio");
-      window.location.reload();
-    } catch (error) {
-      setLoading(false);
-      if (axios.isAxiosError(error) && error.response?.status === 444) {
-        setOtpStage(true);
-      }
-      if (axios.isAxiosError(error)) {
-        const errorMessage =
-          error.response?.data.message || "Failed to sign in";
-        // setError(errorMessage);
-        dispatch(loginFailed(errorMessage));
-      } else {
-        const errorMessage = "Failed to sign in";
-        dispatch(loginFailed(errorMessage));
-        // setError(errorMessage);
-      }
     }
+  }, [jwtToken]);
+
+  const onsubmit = async (data: { email: string; password: string }) => {
+    await dispatch(
+      simpleSignIn({ email: data.email, password: data.password })
+    );
+    // console.log(afterlogin)
+    // setLoading(true);
+    // try {
+    //   const res = await axios.post(
+    //     `${process.env.NEXT_PUBLIC_API_URL}/api/signin`,
+    //     {
+    //       email: data.email,
+    //       password: data.password,
+    //     },
+    //     {
+    //       withCredentials: true,
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //     }
+    //   );
+    //   setLoading(false);
+    //   setCookies("jwtToken", res.data.token);
+    //   // redirect("/portfolio");
+    //   router.push("/portfolio");
+    //   window.location.reload();
+    // } catch (error) {
+    //   setLoading(false);
+    //   if (axios.isAxiosError(error) && error.response?.status === 444) {
+    //     setOtpStage(true);
+    //   }
+    //   if (axios.isAxiosError(error)) {
+    //     const errorMessage =
+    //       error.response?.data.message || "Failed to sign in";
+    //     // setError(errorMessage);
+    //     dispatch(loginFailed(errorMessage));
+    //   } else {
+    //     const errorMessage = "Failed to sign in";
+    //     dispatch(loginFailed(errorMessage));
+    //     // setError(errorMessage);
+    //   }
+    // }
   };
 
   const handleGoogleLogin = async () => {
-    //  await dispatch(googleSignIn());
-    setLoading(true);
-    const provider = new GoogleAuthProvider();
-
-    try {
-      const result = await signInWithPopup(auth, provider);
-      // console.log("result", result.user);
-      const profile = {
-        email_verified: result.user.emailVerified,
-        email: result.user.email,
-      };
-      // console.log(profile)
-      const resp = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/oAuthLogin`,
-        {
-          profile,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      setLoading(false);
-      setCookies("jwtToken", resp.data.token);
-      router.push("/portfolio");
-      window.location.reload();
-    } catch (error) {
-      setLoading(false);
-      if (axios.isAxiosError(error) && error.response?.status === 444) {
-        setOtpStage(true);
-      }
-      if (axios.isAxiosError(error)) {
-        const errorMessage =
-          error.response?.data.message || "Failed to sign in";
-        // setError(errorMessage);
-        dispatch(loginFailed(errorMessage));
-      } else {
-        const errorMessage = "Failed to sign in";
-        dispatch(loginFailed(errorMessage));
-        // setError(errorMessage);
-      }
-    }
+    await dispatch(googleSignInUser());
   };
-
+  // console.log("after login", loading, error, jwtToken);
   return (
     <>
       {otpStage ? (

@@ -1,6 +1,5 @@
 export interface AuthState {
   jwtToken: string | null;
-  isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
 }
@@ -100,4 +99,14 @@ export interface ActivityLog {
   message: string;
   _id: string;
   createdAt: string;
+}
+
+export interface SimpleLoginIn {
+  email: string;
+  password: string;
+}
+
+export interface OtpSignin {
+  givenEmail: string;
+  otpValue: string;
 }

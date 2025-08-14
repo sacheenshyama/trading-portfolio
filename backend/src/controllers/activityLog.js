@@ -16,7 +16,7 @@ const getActivityLog = async (req, res) => {
       .sort({ createdAt: -1 });
 
     if (logs.length === 0) {
-      return res.status(404).json({ message: "No activity logs found" });
+      return res.status(203).json([]);
     }
 
     await redisClient.set(cacheKey, JSON.stringify(logs), { EX: 300 });

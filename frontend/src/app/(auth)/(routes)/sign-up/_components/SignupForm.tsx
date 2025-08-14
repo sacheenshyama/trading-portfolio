@@ -8,12 +8,13 @@ import { z } from "zod";
 import Link from "next/link";
 import OtpForm from "../../_components/OtpForm";
 import { CgSpinner } from "react-icons/cg";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../../../../../../firebase-config";
+// import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+// import { auth } from "../../../../../../firebase-config";
 import { useSetCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@/app/lib/redux/hooks";
-import { loginFailed } from "@/app/lib/redux/featureSlice/authSlice";
+// import { loginFailed } from "@/app/lib/redux/featureSlice/authSlice";
+import { googleSignInUser } from "@/app/lib/redux/services/authApi";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
@@ -64,48 +65,9 @@ const SignupForm = () => {
       }
     }
   };
+  
   const handleGoogleLogin = async () => {
-    //  await dispatch(googleSignIn());
-    setLoading(true);
-    const provider = new GoogleAuthProvider();
-
-    try {
-      const result = await signInWithPopup(auth, provider);
-      // console.log("result", result.user);
-      const profile = {
-        email_verified: result.user.emailVerified,
-        email: result.user.email,
-      };
-      // console.log(profile)
-      const resp = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/oAuthLogin`,
-        {
-          profile,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      setLoading(false);
-      setCookies("jwtToken", resp.data.token);
-      router.push("/portfolio");
-      window.location.reload();
-    } catch (error) {
-      setLoading(false);
-      if (axios.isAxiosError(error) && error.response?.status === 444) {
-        setOtpStage(true);
-      }
-      if (axios.isAxiosError(error)) {
-        const errorMessage =
-          error.response?.data.message || "Failed to sign in";
-        // setError(errorMessage);
-        dispatch(loginFailed(errorMessage));
-      } else {
-        const errorMessage = "Failed to sign in";
-        dispatch(loginFailed(errorMessage));
-        // setError(errorMessage);
-      }
-    }
+    await dispatch(googleSignInUser());
   };
   return (
     <>
