@@ -1,7 +1,6 @@
 "use client";
 import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSetCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -20,7 +19,6 @@ const schema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 const SigninForm = () => {
-  const setCookies = useSetCookie();
   const router = useRouter();
   const { loading, error, jwtToken } = useAppSelector((state) => state.auth);
   const [otpStage, setOtpStage] = useState<boolean>(false);
@@ -44,43 +42,6 @@ const SigninForm = () => {
     await dispatch(
       simpleSignIn({ email: data.email, password: data.password })
     );
-    // console.log(afterlogin)
-    // setLoading(true);
-    // try {
-    //   const res = await axios.post(
-    //     `${process.env.NEXT_PUBLIC_API_URL}/api/signin`,
-    //     {
-    //       email: data.email,
-    //       password: data.password,
-    //     },
-    //     {
-    //       withCredentials: true,
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //     }
-    //   );
-    //   setLoading(false);
-    //   setCookies("jwtToken", res.data.token);
-    //   // redirect("/portfolio");
-    //   router.push("/portfolio");
-    //   window.location.reload();
-    // } catch (error) {
-    //   setLoading(false);
-    //   if (axios.isAxiosError(error) && error.response?.status === 444) {
-    //     setOtpStage(true);
-    //   }
-    //   if (axios.isAxiosError(error)) {
-    //     const errorMessage =
-    //       error.response?.data.message || "Failed to sign in";
-    //     // setError(errorMessage);
-    //     dispatch(loginFailed(errorMessage));
-    //   } else {
-    //     const errorMessage = "Failed to sign in";
-    //     dispatch(loginFailed(errorMessage));
-    //     // setError(errorMessage);
-    //   }
-    // }
   };
 
   const handleGoogleLogin = async () => {

@@ -2,8 +2,7 @@
 import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { otpSignIn } from "@/app/lib/redux/services/authApi";
 import axios from "axios";
-import { useSetCookie } from "cookies-next";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
 import { CgSpinner } from "react-icons/cg";
 

@@ -8,12 +8,8 @@ import { z } from "zod";
 import Link from "next/link";
 import OtpForm from "../../_components/OtpForm";
 import { CgSpinner } from "react-icons/cg";
-// import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-// import { auth } from "../../../../../../firebase-config";
-import { useSetCookie } from "cookies-next";
-import { useRouter } from "next/navigation";
+
 import { useAppDispatch } from "@/app/lib/redux/hooks";
-// import { loginFailed } from "@/app/lib/redux/featureSlice/authSlice";
 import { googleSignInUser } from "@/app/lib/redux/services/authApi";
 
 const schema = z.object({
@@ -22,10 +18,8 @@ const schema = z.object({
 });
 const SignupForm = () => {
   const [loading, setLoading] = useState(false);
-  const setCookies = useSetCookie();
   const dispatch = useAppDispatch();
 
-  const router = useRouter();
   const [error, setError] = useState("");
   const [otpStage, setOtpStage] = useState<boolean>(false);
   const {
@@ -65,7 +59,7 @@ const SignupForm = () => {
       }
     }
   };
-  
+
   const handleGoogleLogin = async () => {
     await dispatch(googleSignInUser());
   };
